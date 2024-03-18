@@ -14,6 +14,8 @@ echo "Setting up git safe directory"
 git config --global --add safe.directory /workspaces/$repo
 
 echo "Setting up content dependencies"
+# delete pre-commit hook if exists
+rm -rf .git/hooks/pre-commit || true
 .hooks/bootstrap
 
 echo "Setting up VSCode"
