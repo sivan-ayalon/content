@@ -17,7 +17,7 @@ API_KEY_LENGTH = 128
 INTEGRATION_CONTEXT_BRAND = 'PaloAltoNetworksXDR'
 XDR_INCIDENT_TYPE_NAME = 'Cortex XDR Incident Schema'
 INTEGRATION_NAME = 'Cortex XDR - IR'
-ALERTS_LIMIT_PER_INCIDENTS = -1
+ALERTS_LIMIT_PER_INCIDENTS = 0
 FIELDS_TO_EXCLUDE = [
     'network_artifacts',
     'file_artifacts'
@@ -297,11 +297,10 @@ class Client(CoreClient):
         :param alerts_limit: Maximum number alerts to get
         :return:
         """
-        request_data = {
+        request_data:dict[str, Any] = {
             'incident_id': incident_id,
             'alerts_limit': alerts_limit,
         }
-
         reply = self._http_request(
             method='POST',
             url_suffix='/incidents/get_incident_extra_data/',
@@ -309,7 +308,7 @@ class Client(CoreClient):
             headers=self.headers,
             timeout=self.timeout
         )
-
+        demisto.debug(f'reply: {reply}')
         incident = reply.get('reply')
 
         return incident
@@ -424,9 +423,9 @@ class Client(CoreClient):
             headers=self.headers,
             timeout=self.timeout,
         )
-        if ALERTS_LIMIT_PER_INCIDENTS < 0:
-            ALERTS_LIMIT_PER_INCIDENTS = arg_to_number(reply.get('reply', {}).get('alerts_limit_per_incident')) or 50
-            demisto.debug(f'Setting alerts limit per incident to {ALERTS_LIMIT_PER_INCIDENTS}')
+        
+        ALERTS_LIMIT_PER_INCIDENTS = arg_to_number(reply.get('reply', {}).get('alerts_limit_per_incident')) or 50
+        demisto.debug(f'Setting alerts limit per incident to {ALERTS_LIMIT_PER_INCIDENTS}')
         incidents = reply.get('reply')
         return incidents.get('incidents', {}) if isinstance(incidents, dict) else incidents  # type: ignore
 
@@ -682,7 +681,7 @@ def insert_cef_alerts_command(client, args):
     )
 
 
-def sort_all_list_incident_fields(incident_data):
+def sort_all_list_incident_fields(incident_data, raw_incident=None):
     """Sorting all lists fields in an incident - without this, elements may shift which results in false
     identification of changed fields"""
     if incident_data.get('hosts', []):
@@ -1000,15 +999,13 @@ def fetch_incidents(client, first_fetch_time, integration_instance, last_run: di
         count_incidents = 0
 
         for raw_incident in raw_incidents:
-            incident_data: dict[str, Any] = raw_incident.get('incident') or raw_incident
+            incident_data: dict[str, Any] = raw_incident.get('incident')
             incident_id = incident_data.get('incident_id')
             alert_count = arg_to_number(incident_data.get('alert_count')) or 0
             if alert_count > ALERTS_LIMIT_PER_INCIDENTS:
-                incident_data = client.get_incident_extra_data(client, {"incident_id": incident_id,
-                                                                        "alerts_limit": 1000})[0].get('incident')\
-                    or {}
-
-            sort_all_list_incident_fields(incident_data)
+                incident_data = client.get_incident_extra_data(incident_id=incident_id,
+                                                               alerts_limit= 1000)
+            sort_all_list_incident_fields(incident_data, raw_incidents)
 
             incident_data['mirror_direction'] = MIRROR_DIRECTION.get(demisto.params().get('mirror_direction', 'None'),
                                                                      None)
@@ -1041,7 +1038,7 @@ def fetch_incidents(client, first_fetch_time, integration_instance, last_run: di
             demisto.info(f"Cortex XDR - rate limit exceeded, number of non created incidents is: "
                          f"'{len(non_created_incidents)}'.\n The incidents will be created in the next fetch")
         else:
-            raise
+            raise Exception(str(e))
 
     if non_created_incidents:
         next_run['incidents_from_previous_run'] = non_created_incidents
