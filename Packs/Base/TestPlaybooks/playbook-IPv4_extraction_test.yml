@@ -1,15 +1,15 @@
 id: IPv4 extraction test
 version: -1
 name: IPv4 extraction test
-description: Test extraction flow of IPv4 in XSOAR
+description: Test extraction flow of IPv4 in XSOAR.
 starttaskid: "0"
 tasks:
   "0":
     id: "0"
-    taskid: def7640e-da15-498b-8e70-6498f009d81c
+    taskid: 6b54bcd9-b93e-41d4-8aa6-0ce7032a2749
     type: start
     task:
-      id: def7640e-da15-498b-8e70-6498f009d81c
+      id: 6b54bcd9-b93e-41d4-8aa6-0ce7032a2749
       version: -1
       name: ""
       iscommand: false
@@ -23,7 +23,7 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 265,
+          "x": 695,
           "y": 50
         }
       }
@@ -36,10 +36,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "9":
     id: "9"
-    taskid: fb706760-78dc-492f-8275-13c5f2a76ed7
+    taskid: a626b47d-2d52-4ecb-8318-25944fdf4898
     type: regular
     task:
-      id: fb706760-78dc-492f-8275-13c5f2a76ed7
+      id: a626b47d-2d52-4ecb-8318-25944fdf4898
       version: -1
       name: DeleteContext
       description: Delete field from context
@@ -58,7 +58,7 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 265,
+          "x": 695,
           "y": 195
         }
       }
@@ -71,10 +71,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "34":
     id: "34"
-    taskid: fcf138a3-53fa-478f-82dc-9ed27d20a605
+    taskid: 09bf2f48-2098-42f5-8b08-9d7a452685d2
     type: title
     task:
-      id: fcf138a3-53fa-478f-82dc-9ed27d20a605
+      id: 09bf2f48-2098-42f5-8b08-9d7a452685d2
       version: -1
       name: IP
       description: IP
@@ -89,7 +89,7 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 265,
+          "x": 695,
           "y": 370
         }
       }
@@ -102,10 +102,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "35":
     id: "35"
-    taskid: 08d030ec-fdb6-4944-8680-8cadc6fc9e46
+    taskid: ec2e66a1-f549-430f-80ce-3256a0033637
     type: regular
     task:
-      id: 08d030ec-fdb6-4944-8680-8cadc6fc9e46
+      id: ec2e66a1-f549-430f-80ce-3256a0033637
       version: -1
       name: Set valid IPs
       description: Sets a value into the context with the given context key
@@ -120,13 +120,13 @@ tasks:
       key:
         simple: valid_ips
       value:
-        simple: '"192.168.1.1", "0[.]0[.]0[.]0"'
+        simple: '"192.168.1.1", "0[.]0[.]0[.]0","192.168.1.2/test","This is an IP 192.168.1.3. "'
     separatecontext: false
     continueonerrortype: ""
     view: |-
       {
         "position": {
-          "x": 265,
+          "x": 695,
           "y": 515
         }
       }
@@ -139,10 +139,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "36":
     id: "36"
-    taskid: d28dd2e2-5386-4581-8197-8328a044e068
+    taskid: 254629a2-a63e-4064-8945-82f15145da40
     type: regular
     task:
-      id: d28dd2e2-5386-4581-8197-8328a044e068
+      id: 254629a2-a63e-4064-8945-82f15145da40
       version: -1
       name: Print valid IPs
       description: Prints text to war room (Markdown supported)
@@ -154,6 +154,8 @@ tasks:
       '#none#':
       - "37"
       - "66"
+      - "68"
+      - "69"
     scriptarguments:
       value:
         simple: ${valid_ips}
@@ -163,7 +165,7 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 265,
+          "x": 695,
           "y": 690
         }
       }
@@ -176,10 +178,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "37":
     id: "37"
-    taskid: 567ccf77-57f4-4934-8055-bcd1afbb8e03
+    taskid: 6309ff4b-3adb-4599-8a7b-f7887c4d2b35
     type: condition
     task:
-      id: 567ccf77-57f4-4934-8055-bcd1afbb8e03
+      id: 6309ff4b-3adb-4599-8a7b-f7887c4d2b35
       version: -1
       name: Check refanged IP - 0.0.0.0
       type: condition
@@ -217,10 +219,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "38":
     id: "38"
-    taskid: d1981471-e9e4-4b38-8efa-a973c1981197
+    taskid: decbad18-71a3-4b3f-83d7-ad640341558b
     type: regular
     task:
-      id: d1981471-e9e4-4b38-8efa-a973c1981197
+      id: decbad18-71a3-4b3f-83d7-ad640341558b
       version: -1
       name: Set invalid IPs
       description: Sets a value into the context with the given context key
@@ -235,13 +237,13 @@ tasks:
       key:
         simple: invalid_ips
       value:
-        simple: '"192.168","256.1.1.1"'
+        simple: '"192.168","256.1.1.1",1.1.192.168.1.11.1.1.1.1"'
     separatecontext: false
     continueonerrortype: ""
     view: |-
       {
         "position": {
-          "x": 265,
+          "x": 695,
           "y": 1040
         }
       }
@@ -254,10 +256,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "39":
     id: "39"
-    taskid: c8bcaec7-0906-4ab1-80ae-31aea942963c
+    taskid: 40924449-ec3b-47e3-855f-94a9da1f64e7
     type: regular
     task:
-      id: c8bcaec7-0906-4ab1-80ae-31aea942963c
+      id: 40924449-ec3b-47e3-855f-94a9da1f64e7
       version: -1
       name: Print invalid IPs
       description: Prints text to war room (Markdown supported)
@@ -269,6 +271,7 @@ tasks:
       '#none#':
       - "40"
       - "67"
+      - "70"
     scriptarguments:
       value:
         simple: ${invalid_ips}
@@ -278,7 +281,7 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 265,
+          "x": 695,
           "y": 1215
         }
       }
@@ -291,10 +294,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "40":
     id: "40"
-    taskid: 96b35320-2a1f-4176-880e-398bd5fa2824
+    taskid: 5cd732fc-7cfc-4f06-8506-61e9bd709cc3
     type: condition
     task:
-      id: 96b35320-2a1f-4176-880e-398bd5fa2824
+      id: 5cd732fc-7cfc-4f06-8506-61e9bd709cc3
       version: -1
       name: Check non extraction of incomplete IP (192.1688)
       type: condition
@@ -319,7 +322,7 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 50,
+          "x": 265,
           "y": 1390
         }
       }
@@ -332,10 +335,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "65":
     id: "65"
-    taskid: e6e2ab2b-42b3-4424-86b6-c0a598459b23
+    taskid: 92329acf-25a7-4a19-82ee-f2ed63cd3b02
     type: regular
     task:
-      id: e6e2ab2b-42b3-4424-86b6-c0a598459b23
+      id: 92329acf-25a7-4a19-82ee-f2ed63cd3b02
       version: -1
       name: DeleteContext
       description: Delete field from context
@@ -351,7 +354,7 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 265,
+          "x": 695,
           "y": 1565
         }
       }
@@ -364,10 +367,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "66":
     id: "66"
-    taskid: 1535062e-33f2-4cb6-8059-f60e481c3c6c
+    taskid: f5762133-59c7-43a9-8ab4-58e6ce6d1928
     type: condition
     task:
-      id: 1535062e-33f2-4cb6-8059-f60e481c3c6c
+      id: f5762133-59c7-43a9-8ab4-58e6ce6d1928
       version: -1
       name: Check normal IP - 192.168.1.1
       type: condition
@@ -405,10 +408,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "67":
     id: "67"
-    taskid: 04532bcc-c88b-40f3-8bad-59ef049ffbe1
+    taskid: 8e9f812b-8ca2-46c6-86c1-55cb023d5694
     type: condition
     task:
-      id: 04532bcc-c88b-40f3-8bad-59ef049ffbe1
+      id: 8e9f812b-8ca2-46c6-86c1-55cb023d5694
       version: -1
       name: Check non extraction of invalid octet
       type: condition
@@ -433,7 +436,130 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 480,
+          "x": 695,
+          "y": 1390
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+    isoversize: false
+    isautoswitchedtoquietmode: false
+  "68":
+    id: "68"
+    taskid: b73b2b96-a293-49a1-83cd-4119b698abe0
+    type: condition
+    task:
+      id: b73b2b96-a293-49a1-83cd-4119b698abe0
+      version: -1
+      name: Check IP from url - 192.168.1.2
+      type: condition
+      iscommand: false
+      brand: ""
+    nexttasks:
+      "yes":
+      - "38"
+    separatecontext: false
+    conditions:
+    - label: "yes"
+      condition:
+      - - operator: containsGeneral
+          left:
+            value:
+              simple: ${IP.Address}
+            iscontext: true
+          right:
+            value:
+              simple: 192.168.1.2
+    continueonerrortype: ""
+    view: |-
+      {
+        "position": {
+          "x": 910,
+          "y": 865
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+    isoversize: false
+    isautoswitchedtoquietmode: false
+  "69":
+    id: "69"
+    taskid: 8d30d156-05fb-4f93-8196-b08d5b02f505
+    type: condition
+    task:
+      id: 8d30d156-05fb-4f93-8196-b08d5b02f505
+      version: -1
+      name: Check IP from free text ending with a dot - 192.168.1.3
+      type: condition
+      iscommand: false
+      brand: ""
+    nexttasks:
+      "yes":
+      - "38"
+    separatecontext: false
+    conditions:
+    - label: "yes"
+      condition:
+      - - operator: containsGeneral
+          left:
+            value:
+              simple: ${IP.Address}
+            iscontext: true
+          right:
+            value:
+              simple: 192.168.1.3
+    continueonerrortype: ""
+    view: |-
+      {
+        "position": {
+          "x": 1340,
+          "y": 865
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+    isoversize: false
+    isautoswitchedtoquietmode: false
+  "70":
+    id: "70"
+    taskid: 7f11fba6-256d-4753-86fa-36f62fbb2a11
+    type: condition
+    task:
+      id: 7f11fba6-256d-4753-86fa-36f62fbb2a11
+      version: -1
+      name: Check non extraction of 192.168.1.11
+      type: condition
+      iscommand: false
+      brand: ""
+    nexttasks:
+      "yes":
+      - "65"
+    separatecontext: false
+    conditions:
+    - label: "yes"
+      condition:
+      - - operator: notContainsGeneral
+          left:
+            value:
+              simple: ${IP.Address}
+            iscontext: true
+          right:
+            value:
+              simple: 192.168.1.11
+    continueonerrortype: ""
+    view: |-
+      {
+        "position": {
+          "x": 1125,
           "y": 1390
         }
       }
@@ -450,7 +576,7 @@ view: |-
     "paper": {
       "dimensions": {
         "height": 1610,
-        "width": 810,
+        "width": 1670,
         "x": 50,
         "y": 50
       }
