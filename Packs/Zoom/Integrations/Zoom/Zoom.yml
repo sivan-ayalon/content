@@ -1265,6 +1265,7 @@ script:
       predefined:
       - 'true'
       - 'false'
+      required: True
     - auto: PREDEFINED
       defaultValue: Both
       description: The mirroring direction.
