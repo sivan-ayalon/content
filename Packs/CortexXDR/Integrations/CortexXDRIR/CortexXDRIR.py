@@ -23,6 +23,15 @@ FIELDS_TO_EXCLUDE = [
     'file_artifacts'
 ]
 
+ALERTS_FIELDS_TO_EXCLUDE = [
+    '_detection_method', '_type', 'activity_first_seen_at',
+    'activity_last_seen_at', 'alert_generated_time', 'alert_layouts',
+    'association_strength', 'bioc_indicator', 'comment', 'content_version', 'detector_api_version',
+    'detector_description', 'detector_id', 'dst_association_strength', 'event_only_full_filter', 'group_id',
+    'indicator_predicate', 'is_dde_alert', 'is_detection', 'lcaas_id', 'server_version', 'silent', 'stateful_raw_data',
+    'variation_rule_id', 'xdr_log_type', 'edrData.action_evtlog_data_fields.content'
+]
+
 
 XDR_INCIDENT_FIELDS = {
     "status": {"description": "Current status of the incident: \"new\",\"under_"
@@ -369,7 +378,8 @@ class Client(CoreClient):
         return reply.get('reply', {})
 
     def get_multiple_incidents_extra_data(self, incident_id_list=[], fields_to_exclude=True, gte_creation_time_milliseconds=0,
-                                          status=None, starred=None, starred_incidents_fetch_window=None,
+                                          status=None, starred=None, starred_incidents_fetch_window=None, drop_nulls=True,
+                                          exclude_alerts_fields=True,
                                           page_number=0, limit=100):
         """
         Returns incident by id
@@ -389,8 +399,14 @@ class Client(CoreClient):
                 'operator': 'eq',
                 'value': status
             })
-        if demisto.command() == 'fetch-incidents' and fields_to_exclude:
-            request_data['fields_to_exclude'] = FIELDS_TO_EXCLUDE  # type: ignore
+        if demisto.command() == 'fetch-incidents':
+            if fields_to_exclude:
+                request_data['fields_to_exclude'] = FIELDS_TO_EXCLUDE  # type: ignore
+            elif exclude_alerts_fields:
+                request_data['exclude_alerts_fields'] = ALERTS_FIELDS_TO_EXCLUDE
+
+        if drop_nulls:
+            request_data['drop_nulls'] = True
 
         if starred and starred_incidents_fetch_window:
             filters.append({
