@@ -298,7 +298,7 @@ class Client(CoreClient):
             timeout=self.timeout
         )
 
-    def get_incident_extra_data(self, incident_id, alerts_limit=1000):
+    def get_incident_extra_data(self, incident_id, alerts_limit=1000, drop_nulls=True):
         """
         Returns incident by id
 
@@ -309,6 +309,7 @@ class Client(CoreClient):
         request_data = {
             'incident_id': incident_id,
             'alerts_limit': alerts_limit,
+            'drop_nulls': True,
         }
 
         reply = self._http_request(
@@ -576,6 +577,7 @@ def get_incident_extra_data_command(client, args):
     incident_id = args.get('incident_id')
     alerts_limit = int(args.get('alerts_limit', 1000))
     return_only_updated_incident = argToBoolean(args.get('return_only_updated_incident', 'False'))
+    drop_nulls = argToBoolean(args.get('drop_nulls', 'False'))
     if return_only_updated_incident:
         last_mirrored_in_time = get_last_mirrored_in_time(args)
         last_modified_incidents_dict = get_integration_context().get('modified_incidents', {})
@@ -585,7 +587,7 @@ def get_incident_extra_data_command(client, args):
 
         else:  # the incident was not modified
             return "The incident was not modified in XDR since the last mirror in.", {}, {}
-    raw_incident = client.get_multiple_incidents_extra_data(incident_id_list=[incident_id])
+    raw_incident = client.get_multiple_incidents_extra_data(incident_id_list=[incident_id], drop_nulls=drop_nulls)
     if not raw_incident:
         raise DemistoException(f'Incident {incident_id} is not found')
     if isinstance(raw_incident, list):
@@ -594,16 +596,16 @@ def get_incident_extra_data_command(client, args):
         demisto.debug(f'for incident:{incident_id} using the old call since "\
             "alert_count:{raw_incident.get("incident", {}).get("alert_count")} >" \
             "limit:{ALERTS_LIMIT_PER_INCIDENTS}')
-        raw_incident = client.get_incident_extra_data(incident_id, alerts_limit)
+        raw_incident = client.get_incident_extra_data(incident_id, alerts_limit, drop_nulls)
     demisto.debug(f"in get_incident_extra_data_command {incident_id=} {raw_incident=}")
-    readable_output = [tableToMarkdown(f'Incident {incident_id}', raw_incident.get('incident'), removeNull=True)]
+    readable_output = [tableToMarkdown(f'Incident {incident_id}', raw_incident.get('incident'))]
     incident = sort_incident_data(raw_incident)
     if incident_alerts := incident.get('alerts'):
         readable_output.append(tableToMarkdown('Alerts', incident_alerts,
                                                headers=[key for key in incident_alerts[0]
                                                         if key != 'host_ip'], removeNull=True))
-    readable_output.append(tableToMarkdown('Network Artifacts', incident.get('network_artifacts'), removeNull=True))
-    readable_output.append(tableToMarkdown('File Artifacts', incident.get('file_artifacts'), removeNull=True))
+    readable_output.append(tableToMarkdown('Network Artifacts', incident.get('network_artifacts')))
+    readable_output.append(tableToMarkdown('File Artifacts', incident.get('file_artifacts')))
 
     account_context_output = assign_params(
         Username=incident.get('users', '')
