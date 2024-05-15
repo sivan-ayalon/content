@@ -46,7 +46,7 @@ configuration:
   section: Connect
   advanced: true
   required: false
-description: Use the IPinfo.io API to get data about an IP address.
+description: Use the IPinfo.io API to get data about an IP address.jj
 display: IPinfo v2
 name: ipinfo_v2
 script:
