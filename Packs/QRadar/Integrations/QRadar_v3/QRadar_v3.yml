@@ -2631,6 +2631,9 @@ script:
       predefined:
       - 'True'
       - 'False'
+    - name: task_id
+      description: The ID of the task that is created to add or update the element in the reference set. The task ID can be used to poll the status of the task by using the 'qradar-tasks-get' command.
+    polling: true
     outputs:
     - contextPath: QRadar.Reference.Name
       description: The name of the reference set.

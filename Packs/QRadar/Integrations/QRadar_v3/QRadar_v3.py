@@ -1004,6 +1004,8 @@ def insert_values_to_reference_set_polling(client: Client,
 
                 search_indicators = IndicatorsSearcher(page=page)
                 indicators = search_indicators.search_indicators_by_version(query=query, size=limit).get('iocs', [])
+                len_ind = len(indicators)
+                print_debug_msg(f"##DEBUG## got indictors num:{len_ind}")
                 indicators_data = [{'Indicator Value': indicator.get('value'), 'Indicator Type': indicator.get('indicator_type')}
                                    for indicator in indicators if 'value' in indicator and 'indicator_type' in indicator]
                 values = [indicator.get('Indicator Value', '') for indicator in indicators_data]
@@ -1021,12 +1023,19 @@ def insert_values_to_reference_set_polling(client: Client,
             if date_value:
                 values = [get_time_parameter(value, epoch_format=True) for value in values]
             if use_old_api:
+                print_debug_msg(f"##DEBUG## going to run reference_set_bulk_load with values {values}")
                 response = client.reference_set_bulk_load(ref_name, values, fields)
+                print_debug_msg(f"##DEBUG## Got response from reference_set_bulk_load with status- {response}")
             else:
+                print_debug_msg(f"##DEBUG## going to run reference_set_entries with values {values}")
                 response = client.reference_set_entries(ref_name, values, fields, source, timeout=300)
+                print_debug_msg(f"##DEBUG## Got response from reference_set_entries with status- {response}")
                 args['task_id'] = response.get('id')
         if not use_old_api:
+            t_id = args["task_id"]
+            print_debug_msg(f"##DEBUG## get status for task= {t_id}")
             response = client.get_reference_data_bulk_task_status(args["task_id"])
+            print_debug_msg(f"##DEBUG## get response for task= {response}")
     except (DemistoException, requests.Timeout) as e:
         if 'task_id' in args:
             print_debug_msg(
@@ -1041,9 +1050,10 @@ def insert_values_to_reference_set_polling(client: Client,
     if use_old_api or response.get("status") == "COMPLETED":
         if not use_old_api:
             # get the reference set data
+            print_debug_msg("##DEBUG## get reference_sets_list")
             response = client.reference_sets_list(ref_name=ref_name)
         outputs = sanitize_outputs(response, REFERENCE_SETS_RAW_FORMATTED)
-
+        print_debug_msg("##DEBUG## finish update referance")
         command_results = CommandResults(
             readable_output=tableToMarkdown('Reference Update Create', outputs, removeNull=True),
             outputs_prefix='QRadar.Reference',
@@ -1052,6 +1062,7 @@ def insert_values_to_reference_set_polling(client: Client,
             raw_response=response
         )
         return PollResult(command_results, continue_to_poll=False)
+    print_debug_msg("##DEBUG## still update referance task")
     return PollResult(
         partial_result=CommandResults(
             readable_output=f'Reference set {ref_name} is still being updated in task {args["task_id"]}'),
