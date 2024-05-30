@@ -10,6 +10,7 @@ jobs:
   is_mp_contrib:
     if: github.event.label.name == 'Contribution Form Filled'
     runs-on: ubuntu-latest
+    name: Is PR Marketplace Contribution 
     steps:
     - name: Is PR Marketplace Contribution?
       id: get_is_mp_contrib
@@ -18,6 +19,7 @@ jobs:
             is_mp_contrib=true
         else
             is_mp_contrib=false
+        fi
 
         echo is_mp_contrib=$is_mp_contrib
 
@@ -29,6 +31,7 @@ jobs:
     if: github.event.label.name == 'Contribution Form Filled'
     runs-on: ubuntu-latest
     needs: is_mp_contrib
+    name: Get Contributor GitHub Username
     steps:
     - name: Get Contributor GitHub Username
       id: get_contributor_gh_username
