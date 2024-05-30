@@ -14,7 +14,7 @@ jobs:
     - name: Is PR Marketplace Contribution?
       id: get_is_mp_contrib
       run: |
-        if [[ ${{ github.event.pull_request.title }} =~ "^[Marketplace Contribution]*" ]];then
+        if [[ "${{ github.event.pull_request.title }}" =~ "^[Marketplace Contribution]*" ]];then
             is_mp_contrib=true
         else
             is_mp_contrib=false
