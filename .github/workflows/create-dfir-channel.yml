@@ -21,9 +21,7 @@ jobs:
             is_mp_contrib=false
         fi
 
-        echo is_mp_contrib=$is_mp_contrib
-
-        echo "is_mp_contrib=$is_mp_contrib" > $GITHUB_OUTPUTS
+        echo "is_mp_contrib=$is_mp_contrib" >> $GITHUB_OUTPUTS
     outputs:
       is_mp_contrib: ${{ steps.get_is_mp_contrib.outputs.is_mp_contrib }}
 
@@ -43,7 +41,5 @@ jobs:
           contributor_gh_username=${{ github.event.pull_request.user.login }}
           echo "contributor_gh_username=$contributor_gh_username" >> $GITHUB_OUTPUTS
         fi
-
-        echo contributor_gh_username="$contributor_gh_username"
     outputs:
       contributor_gh_username: ${{ steps.get_contributor_gh_username.outputs.contributor_gh_username }}
