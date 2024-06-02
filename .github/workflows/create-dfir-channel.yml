@@ -38,8 +38,9 @@ jobs:
           echo "Currently not supported."
           exit 0
         else
-          contributor_gh_username=${{ github.event.pull_request.user.login }}
-          echo "contributor_gh_username=$contributor_gh_username" >> "$GITHUB_OUTPUTS"
+          contributor_gh_username="${{ github.event.pull_request.user.login }}"
         fi
+
+        echo "contributor_gh_username=$contributor_gh_username" >> "$GITHUB_OUTPUTS"
     outputs:
       contributor_gh_username: ${{ steps.get_contributor_gh_username.outputs.contributor_gh_username }}
