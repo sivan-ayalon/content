@@ -49,6 +49,6 @@ jobs:
           contributor_gh_username="${{ github.event.pull_request.user.login }}"
         fi
 
-        echo "contributor_gh_username=$contributor_gh_username" >> "$GITHUB_OUTPUTS"
+        echo "contributor_gh_username=$contributor_gh_username" >> "$GITHUB_OUTPUT"
     outputs:
       contributor_gh_username: ${{ steps.get_contributor_gh_username.outputs.contributor_gh_username }}
