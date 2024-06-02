@@ -7,20 +7,15 @@ on:
 
 jobs:
 
-  checkout:
+  is_mp_contrib:
+    if: github.event.label.name == 'Contribution Form Filled'
     runs-on: ubuntu-latest
-    name: Checkout Repo
+    name: Is PR Marketplace Contribution
     steps:
     - name: Checkout
       uses: actions/checkout@v4
       with:
         sparse-checkout: .github
-
-  is_mp_contrib:
-    if: github.event.label.name == 'Contribution Form Filled'
-    runs-on: ubuntu-latest
-    name: Is PR Marketplace Contribution 
-    steps:
     - name: Is PR Marketplace Contribution?
       id: get_is_mp_contrib
       run: |
@@ -40,6 +35,10 @@ jobs:
     needs: is_mp_contrib
     name: Get Contributor GitHub Username
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        sparse-checkout: .github
     - name: Get Contributor GitHub Username
       id: get_contributor_gh_username
       run: |         
