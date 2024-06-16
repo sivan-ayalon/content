@@ -102,7 +102,7 @@ class Client(BaseClient):
         params = assign_params(subtenant=subtenant)
 
         response = self._http_request('get', f'threats/{threat_id}', params=params, headers=headers)
-
+        response = self._remove_keys_from_response(response, ["pageNumber", "nextPageNumber"])
         return response
 
     def get_details_of_an_abnormal_case_request(self, case_id, subtenant=None):
