@@ -121,7 +121,7 @@
                 "propagationLabels": [
                     "all"
                 ],
-                "query": "type:File and (verdict:Malicious or verdict:Suspicious) and investigationIDs:*",
+                "query": "type:File and (verdict:Malicious or verdict:Suspicious) and incident.id:*",
                 "shouldCommit": false,
                 "size": 10,
                 "sort": [
@@ -204,7 +204,7 @@
                 "propagationLabels": [
                     "all"
                 ],
-                "query": "type:\"Attack Pattern\" and (verdict:Malicious or verdict:Suspicious) and investigationIDs:*",
+                "query": "type:\"Attack Pattern\" and (verdict:Malicious or verdict:Suspicious) and incident.id:*",
                 "shouldCommit": false,
                 "size": 10,
                 "sort": [
@@ -268,7 +268,7 @@
                 "propagationLabels": [
                     "all"
                 ],
-                "query": "(verdict:Malicious or verdict:Suspicious) and investigationIDs:*",
+                "query": "(verdict:Malicious or verdict:Suspicious) and incident.id:*",
                 "shouldCommit": false,
                 "toServerVersion": "",
                 "vcShouldIgnore": false,
@@ -350,7 +350,7 @@
                 "propagationLabels": [
                     "all"
                 ],
-                "query": "investigationIDs:* and expirationStatus:active and (verdict:Malicious or verdict:Suspicious or verdict:Unknown)",
+                "query": "incident.id:* and expirationStatus:active and (verdict:Malicious or verdict:Suspicious or verdict:Unknown)",
                 "shouldCommit": false,
                 "size": 10,
                 "sort": [

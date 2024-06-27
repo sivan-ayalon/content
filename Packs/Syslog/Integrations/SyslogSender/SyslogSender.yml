@@ -94,8 +94,6 @@ configuration:
   - Critical
   type: 15
   required: false
-  hidden:
-  - marketplacev2
 description: Use the Syslog Sender integration to send messages and mirror incident War Room entries to Syslog.
 display: Syslog Sender
 name: Syslog Sender
@@ -186,7 +184,7 @@ script:
       - LOG_LOCAL7
     description: Sends a message to Syslog.
     name: syslog-send
-  dockerimage: demisto/syslog:1.0.0.99686
+  dockerimage: demisto/syslog:1.0.0.87503
   runonce: false
   script: '-'
   subtype: python3

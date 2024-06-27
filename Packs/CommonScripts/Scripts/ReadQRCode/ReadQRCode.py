@@ -1,46 +1,27 @@
 import demistomock as demisto  # noqa
 from CommonServerPython import *  # noqa
-from typing import IO
 from pyzbar import pyzbar
 import cv2
-import tempfile
+from wurlitzer import pipes
 # pylint: disable=E1101  # disable pylint not recognizing cv2's attributes.
-
-
-class StderrRedirect:
-    '''Context manager to redirect stderr.'''
-    temp_stderr: IO
-    old_stderr: int
-
-    def __enter__(self):
-        demisto.debug('entering StderrRedirect')
-        self.temp_stderr = tempfile.TemporaryFile()
-        self.old_stderr = os.dup(sys.stderr.fileno())  # make a copy of stderr
-        os.dup2(self.temp_stderr.fileno(), sys.stderr.fileno())  # redirect stderr to the temporary file
-
-    def __exit__(self, exc_type, exc_value, exc_traceback):
-        demisto.debug(f'exiting StderrRedirect: {exc_type=}, {exc_value=}, {exc_traceback=}')
-        self.temp_stderr.seek(0)
-        demisto.debug(f'stderr: {self.temp_stderr.read()}')
-        os.dup2(self.old_stderr, sys.stderr.fileno())  # restore stderr
-        os.close(self.old_stderr)
-        self.temp_stderr.close()
 
 
 def read_qr_code(filename: str) -> list:
 
-    with StderrRedirect():  # redirect stderr to catch cv2 warnings which are sent directly to stderr
-
+    debug_messages = []  # don't use demisto.debug under the context manager.
+    with pipes() as (out, _):
         img = cv2.imread(filename)
-        demisto.debug(f'loaded file: {filename}')
-        text = [d.data.decode() for d in pyzbar.decode(img, symbols=[pyzbar.ZBarSymbol.QRCODE])]
-        demisto.debug(f'pybar decode: {text}')
+        text = [d.data.decode() for d in pyzbar.decode(img)]
 
         if not text:
-            demisto.debug("Couldn't extract text with pyzbar, retrying with cv2.")
-            text = [cv2.QRCodeDetector().detectAndDecode(img)[0]]
+            debug_messages.append("Couldn't extract text with pyzbar, retrying with cv2.")
+            detect = cv2.QRCodeDetector()
+            text, *_ = detect.detectAndDecode(img)
 
-    return text
+        debug_messages.append(f'stdout: {out.read()}')
+
+    demisto.debug('\n'.join(debug_messages))
+    return text if isinstance(text, list) else [text]
 
 
 def extract_indicators_from_text(text: list) -> dict:
@@ -61,16 +42,15 @@ def extract_info_from_qr_code(entry_id: str) -> CommandResults:
         indicators = extract_indicators_from_text(text)
     except (cv2.error, TypeError) as e:  # generic error raised by cv2
         raise DemistoException('Error parsing file. Please make sure it is a valid image file.') from e
-    except ValueError as e:  # raised by demisto.getFilePath when the entry_id is not found
-        demisto.debug(f'ValueError: {e}, {e.args}')
-        raise DemistoException(f'Invalid entry ID: {entry_id=}') from e
+    except ValueError:  # raised by demisto.getFilePath when the entry_id is not found
+        raise DemistoException(f'Invalid entry ID: {entry_id=}')
+
     return CommandResults(
         outputs_prefix='QRCodeReader',
         outputs=({'Text': text} | indicators),
         readable_output=tableToMarkdown(
             'QR Code Read', {'Text': text}
         ),
-        ignore_auto_extract=True
     )
 
 

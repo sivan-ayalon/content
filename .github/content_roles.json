@@ -1,10 +1,10 @@
 {
     "CONTRIBUTION_REVIEWERS": [
-        "MosheEichler",
-        "samuelFain",
-        "israelpoli"
+        "RotemAmit",
+        "jlevypaloalto",
+        "Shellyber"
     ],
-    "CONTRIBUTION_TL": "thefrieddan1",
+    "CONTRIBUTION_TL": "BEAdi",
     "CONTRIBUTION_SECURITY_REVIEWER": "ssokolovich",
     "ON_CALL_DEVS": [
         "acarmi",

@@ -1495,8 +1495,5 @@
     "version": -1,
     "fromVersion": "6.0.0",
     "description": "",
-    "isPredefined": true,
-    "marketplaces": [
-        "xsoar_on_prem"
-    ]
+    "isPredefined": true
 }

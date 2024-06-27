@@ -11,7 +11,9 @@ args:
 - default: true
   description: aaa.
   name: closing_reason
-comment: Deprecated. No available replacement.
+comment: |-
+  Arcanna.Ai post-processing script for sending feedback back to Arcanna about the closed incident. Additional modification might be required depending on each Cortex setup.
+  This script is intended to be used as a sample or in conjunction with the Arcanna-Generic-Investigation playbook.
 commonfields:
   id: ArcannaFeedbackPostProcessing
   version: -1
@@ -23,13 +25,12 @@ tags:
 - post-processing
 timeout: '0'
 type: python
-dockerimage: demisto/python3:3.10.14.98471
+dockerimage: demisto/python3:3.10.14.95956
 runas: DBotWeakRole
 dependson:
   should:
   - Arcanna.AI|||arcanna-send-event
   - Arcanna.AI|||arcanna-get-event-status
 fromversion: 5.5.0
-deprecated: true
 tests:
 - No tests (auto formatted)

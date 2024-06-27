@@ -1,4 +1,3 @@
-import uuid
 import demistomock as demisto
 from CommonServerPython import *
 from CommonServerUserPython import *
@@ -183,16 +182,10 @@ def parse_mail_parts(parts):
                 body += text
 
         else:
-            if part['body'].get('attachmentId') is not None and part.get('headers'):
-                identifier_id = ""
-                for header in part['headers']:
-                    if header.get('name') == 'Content-ID':
-                        identifier_id = header.get('value').strip("<>")
-                    if not identifier_id or identifier_id == "None":
-                        identifier_id = part['body'].get('attachmentId').strip("<>")
+            if part['body'].get('attachmentId') is not None:
                 attachments.append({
                     'ID': part['body']['attachmentId'],
-                    'Name': f"{identifier_id}-imageName:{part['filename']}",
+                    'Name': part['filename']
                 })
 
     return body, html, attachments
@@ -1526,14 +1519,13 @@ def get_attachments_command():
     args = demisto.args()
     user_id = args.get('user-id')
     _id = args.get('message-id')
-    identifiers_filter = args.get('identifiers-filter', "")
 
-    attachments = get_attachments(user_id, _id, identifiers_filter)
+    attachments = get_attachments(user_id, _id)
 
     return [fileResult(name, data) for name, data in attachments]
 
 
-def get_attachments(user_id, _id, identifiers_filter=""):
+def get_attachments(user_id, _id):
     mail_args = {
         'userId': user_id,
         'id': _id,
@@ -1552,15 +1544,12 @@ def get_attachments(user_id, _id, identifiers_filter=""):
         'messageId': _id,
     }
     files = []
-    for attachment in result.get('Attachments', []):
-        identifiers_filter_array = argToList(identifiers_filter)
+    for attachment in result['Attachments']:
         command_args['id'] = attachment['ID']
         result = service.users().messages().attachments().get(**command_args).execute()
-        if (not identifiers_filter_array
-                or ('-imageName:' in attachment['Name']
-                    and attachment['Name'].split('-imageName:')[0] in identifiers_filter_array)):
-            file_data = base64.urlsafe_b64decode(result['data'].encode('ascii'))
-            files.append((attachment['Name'], file_data))
+        file_data = base64.urlsafe_b64decode(result['data'].encode('ascii'))
+        files.append((attachment['Name'], file_data))
+
     return files
 
 
@@ -1935,17 +1924,15 @@ def handle_html(htmlBody):
     ):
         maintype, subtype = m.group(2).split('/', 1)
         name = f"image{i}.{subtype}"
-        cid = (f'{name}@{str(uuid.uuid4())[:8]}_{str(uuid.uuid4())[:8]}')
-        attachment = {
+        att = {
             'maintype': maintype,
             'subtype': subtype,
             'data': base64.b64decode(m.group(3)),
             'name': name,
-            'cid': cid,
-            'ID': cid
+            'cid': name
         }
-        attachments.append(attachment)
-        cleanBody += htmlBody[lastIndex:m.start(1)] + 'cid:' + attachment['cid']
+        attachments.append(att)
+        cleanBody += htmlBody[lastIndex:m.start(1)] + 'cid:' + att['cid']
         lastIndex = m.end() - 1
 
     cleanBody += htmlBody[lastIndex:]
@@ -2059,7 +2046,7 @@ def attachment_handler(message, attachments):
             msg_txt = MIMEText(att['data'], att['subtype'], 'utf-8')
             if att['cid'] is not None:
                 msg_txt.add_header('Content-Disposition', 'inline', filename=att['name'])
-                msg_txt.add_header('Content-ID', '<' + att['cid'] + '>')
+                msg_txt.add_header('Content-ID', '<' + att['name'] + '>')
 
             else:
                 msg_txt.add_header('Content-Disposition', 'attachment', filename=att['name'])
@@ -2069,9 +2056,7 @@ def attachment_handler(message, attachments):
             msg_img = MIMEImage(att['data'], att['subtype'])
             if att['cid'] is not None:
                 msg_img.add_header('Content-Disposition', 'inline', filename=att['name'])
-                msg_img.add_header('Content-ID', '<' + att['cid'] + '>')
-                if att.get('ID'):
-                    msg_img.add_header('X-Attachment-Id', att['ID'])
+                msg_img.add_header('Content-ID', '<' + att['name'] + '>')
 
             else:
                 msg_img.add_header('Content-Disposition', 'attachment', filename=att['name'])
@@ -2081,7 +2066,7 @@ def attachment_handler(message, attachments):
             msg_aud = MIMEAudio(att['data'], att['subtype'])
             if att['cid'] is not None:
                 msg_aud.add_header('Content-Disposition', 'inline', filename=att['name'])
-                msg_aud.add_header('Content-ID', '<' + att['cid'] + '>')
+                msg_aud.add_header('Content-ID', '<' + att['name'] + '>')
 
             else:
                 msg_aud.add_header('Content-Disposition', 'attachment', filename=att['name'])
@@ -2091,7 +2076,7 @@ def attachment_handler(message, attachments):
             msg_app = MIMEApplication(att['data'], att['subtype'])
             if att['cid'] is not None:
                 msg_app.add_header('Content-Disposition', 'inline', filename=att['name'])
-                msg_app.add_header('Content-ID', '<' + att['cid'] + '>')
+                msg_app.add_header('Content-ID', '<' + att['name'] + '>')
             else:
                 msg_app.add_header('Content-Disposition', 'attachment', filename=att['name'])
             message.attach(msg_app)
@@ -2101,7 +2086,7 @@ def attachment_handler(message, attachments):
             msg_base.set_payload(att['data'])
             if att['cid'] is not None:
                 msg_base.add_header('Content-Disposition', 'inline', filename=att['name'])
-                msg_base.add_header('Content-ID', '<' + att['cid'] + '>')
+                msg_base.add_header('Content-ID', '<' + att['name'] + '>')
 
             else:
                 msg_base.add_header('Content-Disposition', 'attachment', filename=att['name'])
@@ -2237,7 +2222,9 @@ def mail_command(args, subject_prefix='', in_reply_to=None, references=None):
             content_format=EntryFormat.HTML,
             raw_response=html_body,
         )
+
         return [send_mail_result, html_result]
+
     return send_mail_result
 
 

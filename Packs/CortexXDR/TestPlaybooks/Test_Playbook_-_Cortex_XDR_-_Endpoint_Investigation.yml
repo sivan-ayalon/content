@@ -12,10 +12,10 @@ starttaskid: "0"
 tasks:
   "0":
     id: "0"
-    taskid: 0e0b54d6-b8b0-423b-8a5a-999ec893b300
+    taskid: ce53f9de-f436-41e7-8503-462a2f1d335b
     type: start
     task:
-      id: 0e0b54d6-b8b0-423b-8a5a-999ec893b300
+      id: ce53f9de-f436-41e7-8503-462a2f1d335b
       version: -1
       name: ""
       iscommand: false
@@ -30,7 +30,7 @@ tasks:
       {
         "position": {
           "x": 540,
-          "y": -1625
+          "y": -1465
         }
       }
     note: false
@@ -42,10 +42,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "32":
     id: "32"
-    taskid: 070df723-d62c-4a76-89c0-321a781ac5ba
+    taskid: 41d60b6d-e2e8-46db-8c86-5dd132deea9d
     type: regular
     task:
-      id: 070df723-d62c-4a76-89c0-321a781ac5ba
+      id: 41d60b6d-e2e8-46db-8c86-5dd132deea9d
       version: -1
       name: Delete Context
       description: The task deletes all of the context data. Having a clean beginning to a test playbook ensures that a test can be sterile and that unrelated issues can be eliminated.
@@ -65,7 +65,7 @@ tasks:
       {
         "position": {
           "x": 540,
-          "y": -1495
+          "y": -1335
         }
       }
     note: false
@@ -77,10 +77,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "46":
     id: "46"
-    taskid: 141c6a09-7365-441a-868b-dd4988276a19
+    taskid: 8def3518-b0ee-4303-8458-98ce43cddb39
     type: condition
     task:
-      id: 141c6a09-7365-441a-868b-dd4988276a19
+      id: 8def3518-b0ee-4303-8458-98ce43cddb39
       version: -1
       name: Verify Internal ID
       description: |
@@ -110,8 +110,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 2380,
-          "y": -410
+          "x": 2170,
+          "y": -80
         }
       }
     note: false
@@ -123,10 +123,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "73":
     id: "73"
-    taskid: bc8b907e-283f-4076-8112-b94536277cc9
+    taskid: b20e81ae-be64-463e-83a5-da93f6d26bdd
     type: condition
     task:
-      id: bc8b907e-283f-4076-8112-b94536277cc9
+      id: b20e81ae-be64-463e-83a5-da93f6d26bdd
       version: -1
       name: Verify Alerts
       description: Verify that the ‘PaloAltoNetworksXDR.Incident.Alerts’ context key was extracted correctly.
@@ -153,8 +153,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 1975,
-          "y": -410
+          "x": 1765,
+          "y": -80
         }
       }
     note: false
@@ -166,10 +166,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "74":
     id: "74"
-    taskid: 7953ac22-a003-4d48-8bd9-c2caba6011a7
+    taskid: 6747ac48-90af-4c51-83d1-480b79458b8d
     type: condition
     task:
-      id: 7953ac22-a003-4d48-8bd9-c2caba6011a7
+      id: 6747ac48-90af-4c51-83d1-480b79458b8d
       version: -1
       name: Verify Alert Name
       description: |
@@ -195,8 +195,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 3170,
-          "y": -410
+          "x": 3040,
+          "y": -80
         }
       }
     note: false
@@ -208,10 +208,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "75":
     id: "75"
-    taskid: 35b84fc9-006e-46cb-8d3d-3b67dbcfb215
+    taskid: 3138e111-701b-4704-880e-6370bb8c48b7
     type: condition
     task:
-      id: 35b84fc9-006e-46cb-8d3d-3b67dbcfb215
+      id: 3138e111-701b-4704-880e-6370bb8c48b7
       version: -1
       name: Verify Detection Timestamp
       description: |
@@ -239,8 +239,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 2775,
-          "y": -410
+          "x": 2605,
+          "y": -80
         }
       }
     note: false
@@ -252,10 +252,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "84":
     id: "84"
-    taskid: ef8e188d-b50e-4b58-8544-abc0f2e0944e
+    taskid: 2e4e3fde-110c-4ce4-8f40-00180e9ff00e
     type: title
     task:
-      id: ef8e188d-b50e-4b58-8544-abc0f2e0944e
+      id: 2e4e3fde-110c-4ce4-8f40-00180e9ff00e
       version: -1
       name: Start Tests
       type: title
@@ -283,12 +283,56 @@ tasks:
     quietmode: 0
     isoversize: false
     isautoswitchedtoquietmode: false
-  "113":
-    id: "113"
-    taskid: 9edb91b9-451d-42a8-8fe3-5c1d57f1a196
+  "112":
+    id: "112"
+    taskid: 40f54a83-2c2d-4da1-8225-171b5051dd5d
     type: title
     task:
-      id: 9edb91b9-451d-42a8-8fe3-5c1d57f1a196
+      id: 40f54a83-2c2d-4da1-8225-171b5051dd5d
+      version: -1
+      name: '''PaloAltoNetworksXDR'' Context Data'
+      type: title
+      iscommand: false
+      brand: ""
+      description: ''
+    nexttasks:
+      '#none#':
+      - "46"
+      - "73"
+      - "74"
+      - "75"
+      - "294"
+      - "296"
+      - "298"
+      - "300"
+      - "302"
+      - "312"
+      - "304"
+      - "306"
+      - "308"
+      - "310"
+    separatecontext: false
+    continueonerrortype: ""
+    view: |-
+      {
+        "position": {
+          "x": 1765,
+          "y": -225
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+    isoversize: false
+    isautoswitchedtoquietmode: false
+  "113":
+    id: "113"
+    taskid: ca13c35f-a6fe-43c0-841b-23463d19f793
+    type: title
+    task:
+      id: ca13c35f-a6fe-43c0-841b-23463d19f793
       version: -1
       name: Done verifying 'PaloAltoNetworksXDR'
       type: title
@@ -303,8 +347,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 1550,
-          "y": -60
+          "x": 1360,
+          "y": 110
         }
       }
     note: false
@@ -316,10 +360,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "114":
     id: "114"
-    taskid: 08a76e10-b981-4ba5-8c74-3a546e67325d
+    taskid: 156b6f7f-eb66-45b2-8335-cfc9e2802fa2
     type: regular
     task:
-      id: 08a76e10-b981-4ba5-8c74-3a546e67325d
+      id: 156b6f7f-eb66-45b2-8335-cfc9e2802fa2
       version: -1
       name: Verify Context Error - Detection Timestamp
       description: Prints an error entry with a given message
@@ -335,8 +379,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 2775,
-          "y": -25
+          "x": 2605,
+          "y": 165
         }
       }
     note: false
@@ -348,10 +392,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "115":
     id: "115"
-    taskid: 9b252a84-7125-42b0-88c1-3220caa14b73
+    taskid: 419426c3-62ef-4fd5-8e6c-d18e06a51e6e
     type: regular
     task:
-      id: 9b252a84-7125-42b0-88c1-3220caa14b73
+      id: 419426c3-62ef-4fd5-8e6c-d18e06a51e6e
       version: -1
       name: Verify Context Error - Alert Name
       description: Prints an error entry with a given message
@@ -367,8 +411,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 3170,
-          "y": -25
+          "x": 3040,
+          "y": 165
         }
       }
     note: false
@@ -380,10 +424,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "116":
     id: "116"
-    taskid: e2cab238-6eb1-449c-805f-9be64c3cc9fe
+    taskid: 2916273e-6b3b-4d10-844a-d273b741e083
     type: regular
     task:
-      id: e2cab238-6eb1-449c-805f-9be64c3cc9fe
+      id: 2916273e-6b3b-4d10-844a-d273b741e083
       version: -1
       name: Verify Context Data Error - Alerts
       description: Prints an error entry with a given message
@@ -399,8 +443,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 1975,
-          "y": -25
+          "x": 1770,
+          "y": 165
         }
       }
     note: false
@@ -412,10 +456,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "117":
     id: "117"
-    taskid: 0447489a-c244-4529-80d1-23a69aebaf2a
+    taskid: 40b8cdea-3c15-4490-8a49-9870b0ae7236
     type: regular
     task:
-      id: 0447489a-c244-4529-80d1-23a69aebaf2a
+      id: 40b8cdea-3c15-4490-8a49-9870b0ae7236
       version: -1
       name: Verify Context Data Error - Internal ID
       description: Prints an error entry with a given message
@@ -431,8 +475,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 2380,
-          "y": -25
+          "x": 2170,
+          "y": 165
         }
       }
     note: false
@@ -444,10 +488,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "132":
     id: "132"
-    taskid: 96dd1fb4-87c9-4d69-8dec-d79ab4550f23
+    taskid: e27e7e00-5718-43e8-8db8-5594b5f61c1c
     type: title
     task:
-      id: 96dd1fb4-87c9-4d69-8dec-d79ab4550f23
+      id: e27e7e00-5718-43e8-8db8-5594b5f61c1c
       version: -1
       name: Check Incident Evidences
       type: title
@@ -462,7 +506,7 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 1140,
+          "x": 930,
           "y": -550
         }
       }
@@ -475,10 +519,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "149":
     id: "149"
-    taskid: 7cee0cc7-486c-4e0d-8991-13cb066ee82e
+    taskid: 48258f6f-0ef8-4dc7-8e06-be71dbe77cde
     type: regular
     task:
-      id: 7cee0cc7-486c-4e0d-8991-13cb066ee82e
+      id: 48258f6f-0ef8-4dc7-8e06-be71dbe77cde
       version: -1
       name: Set Incident Fields To Context
       description: Add incident fields required for testing to the mock incident.
@@ -500,7 +544,7 @@ tasks:
       {
         "position": {
           "x": 540,
-          "y": -1330
+          "y": -1170
         }
       }
     note: false
@@ -512,10 +556,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "151":
     id: "151"
-    taskid: fbf2684c-25be-48f3-8392-04305f32da7a
+    taskid: 4f384f59-8318-4dd1-8c98-475e10ce4ea7
     type: title
     task:
-      id: fbf2684c-25be-48f3-8392-04305f32da7a
+      id: 4f384f59-8318-4dd1-8c98-475e10ce4ea7
       version: -1
       name: Check Context Data
       type: title
@@ -557,10 +601,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "220":
     id: "220"
-    taskid: 46b7ab88-40ce-48bb-8fa3-a9ec36d330ca
+    taskid: 903cd374-83be-4dc5-86c6-386782ce0ab9
     type: condition
     task:
-      id: 46b7ab88-40ce-48bb-8fa3-a9ec36d330ca
+      id: 903cd374-83be-4dc5-86c6-386782ce0ab9
       version: -1
       name: Verify MITRE Techniques Specific ID
       description: Verify that the 'MITRE_Techniques_Specific_ID’ context key was extracted.
@@ -602,10 +646,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "221":
     id: "221"
-    taskid: d98e35b0-b5b5-4250-8fe4-4fc15e53025a
+    taskid: 978e6936-9afd-45b7-83cd-1ffc5300057b
     type: regular
     task:
-      id: d98e35b0-b5b5-4250-8fe4-4fc15e53025a
+      id: 978e6936-9afd-45b7-83cd-1ffc5300057b
       version: -1
       name: Verify Context Error - MITRE Techniques Specific ID
       description: Prints an error entry with a given message
@@ -638,10 +682,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "292":
     id: "292"
-    taskid: c1216f7b-2ff9-43e6-80ea-6f46e3007150
+    taskid: fdb71645-23b4-457c-8138-9d67dc867ed8
     type: playbook
     task:
-      id: c1216f7b-2ff9-43e6-80ea-6f46e3007150
+      id: fdb71645-23b4-457c-8138-9d67dc867ed8
       version: -1
       name: Cortex XDR - Endpoint Investigation
       description: "This playbook is part of the 'Malware Investigation And Response' pack. For more information, refer to https://xsoar.pan.dev/docs/reference/packs/malware-investigation-and-response. This playbook handles all the endpoint investigation actions available with Cortex XSOAR, including the following tasks:\n * Pre-defined MITRE Tactics\n * Host fields (Host ID)\n * Attacker fields (Attacker IP, External host)\n * MITRE techniques\n * File hash (currently, the playbook supports only SHA256)  \n\n Note: The playbook inputs enable manipulating the execution flow; read the input descriptions for details."
@@ -651,7 +695,7 @@ tasks:
       brand: ""
     nexttasks:
       '#none#':
-      - "366"
+      - "84"
     scriptarguments:
       FileSHA256:
         complex:
@@ -712,7 +756,7 @@ tasks:
       {
         "position": {
           "x": 540,
-          "y": -1010
+          "y": -850
         }
       }
     note: false
@@ -724,10 +768,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "293":
     id: "293"
-    taskid: c6f8e20b-bc2d-4e56-870b-bf026ce122b0
+    taskid: ab891216-a18d-4141-8eb3-2365de8abca0
     type: regular
     task:
-      id: c6f8e20b-bc2d-4e56-870b-bf026ce122b0
+      id: ab891216-a18d-4141-8eb3-2365de8abca0
       version: -1
       name: Set 'File.SHA256' to context
       description: |-
@@ -755,7 +799,7 @@ tasks:
       {
         "position": {
           "x": 540,
-          "y": -1170
+          "y": -1010
         }
       }
     note: false
@@ -767,10 +811,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "294":
     id: "294"
-    taskid: 89e126a4-862d-4639-8e11-2f557a9459ee
+    taskid: 86594eb7-342a-49ee-81d7-4d5c1f449812
     type: condition
     task:
-      id: 89e126a4-862d-4639-8e11-2f557a9459ee
+      id: 86594eb7-342a-49ee-81d7-4d5c1f449812
       version: -1
       name: Verify Alert Severity
       description: |
@@ -798,8 +842,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 3570,
-          "y": -410
+          "x": 3440,
+          "y": -80
         }
       }
     note: false
@@ -811,10 +855,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "295":
     id: "295"
-    taskid: c3c02afd-627c-4e26-8fdf-4820339ccf5f
+    taskid: 1edc95c3-8ed8-4ec5-8124-f8b7117ba3e9
     type: regular
     task:
-      id: c3c02afd-627c-4e26-8fdf-4820339ccf5f
+      id: 1edc95c3-8ed8-4ec5-8124-f8b7117ba3e9
       version: -1
       name: Verify Context Error - Alert Severity
       description: Prints an error entry with a given message
@@ -830,8 +874,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 3570,
-          "y": -25
+          "x": 3440,
+          "y": 165
         }
       }
     note: false
@@ -843,10 +887,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "296":
     id: "296"
-    taskid: b0f6293b-29db-4aaa-8fa8-0ba85027effc
+    taskid: d4703163-c594-401d-88c3-704743a34a8d
     type: condition
     task:
-      id: b0f6293b-29db-4aaa-8fa8-0ba85027effc
+      id: d4703163-c594-401d-88c3-704743a34a8d
       version: -1
       name: Verify Alert Category
       description: |
@@ -872,8 +916,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 3970,
-          "y": -410
+          "x": 3840,
+          "y": -80
         }
       }
     note: false
@@ -885,10 +929,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "297":
     id: "297"
-    taskid: 6f7f8088-61dd-45db-845c-b754501fd4e0
+    taskid: 4d366b1d-a7cf-4b29-8b6f-1c107b764e27
     type: regular
     task:
-      id: 6f7f8088-61dd-45db-845c-b754501fd4e0
+      id: 4d366b1d-a7cf-4b29-8b6f-1c107b764e27
       version: -1
       name: Verify Context Error - Alert Category
       description: Prints an error entry with a given message
@@ -904,8 +948,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 3970,
-          "y": -25
+          "x": 3840,
+          "y": 165
         }
       }
     note: false
@@ -917,10 +961,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "298":
     id: "298"
-    taskid: 48b6a0cd-0b8f-4b13-8f06-b58dff61ed1d
+    taskid: 22aac2a3-e231-4f58-8da5-60f667cc7448
     type: condition
     task:
-      id: 48b6a0cd-0b8f-4b13-8f06-b58dff61ed1d
+      id: 22aac2a3-e231-4f58-8da5-60f667cc7448
       version: -1
       name: Verify Alert Action Status
       description: |
@@ -946,8 +990,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 4370,
-          "y": -410
+          "x": 4240,
+          "y": -80
         }
       }
     note: false
@@ -959,10 +1003,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "299":
     id: "299"
-    taskid: 7b0c6575-f09b-4196-8bb0-e9665a3d82d3
+    taskid: 52e87342-aee8-4add-8f21-955b42f75493
     type: regular
     task:
-      id: 7b0c6575-f09b-4196-8bb0-e9665a3d82d3
+      id: 52e87342-aee8-4add-8f21-955b42f75493
       version: -1
       name: Verify Context Error - Alert Action Status
       description: Prints an error entry with a given message
@@ -978,8 +1022,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 4370,
-          "y": -25
+          "x": 4240,
+          "y": 165
         }
       }
     note: false
@@ -991,10 +1035,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "300":
     id: "300"
-    taskid: 0ca5ec2e-563e-4e99-8542-dd7ce225c178
+    taskid: ee17f12f-92ce-44c8-8f5e-62dbb3641349
     type: condition
     task:
-      id: 0ca5ec2e-563e-4e99-8542-dd7ce225c178
+      id: ee17f12f-92ce-44c8-8f5e-62dbb3641349
       version: -1
       name: Verify Alert Action Status Readable
       description: |
@@ -1020,8 +1064,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 4770,
-          "y": -410
+          "x": 4640,
+          "y": -80
         }
       }
     note: false
@@ -1033,10 +1077,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "301":
     id: "301"
-    taskid: 311ae564-3b0b-4e5a-8dce-70cad5d85ea3
+    taskid: e2fa6463-cce7-456b-8ad5-a4a4c2ecf2af
     type: regular
     task:
-      id: 311ae564-3b0b-4e5a-8dce-70cad5d85ea3
+      id: e2fa6463-cce7-456b-8ad5-a4a4c2ecf2af
       version: -1
       name: Verify Context Error - Alert Action Status Readable
       description: Prints an error entry with a given message
@@ -1052,8 +1096,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 4770,
-          "y": -25
+          "x": 4640,
+          "y": 165
         }
       }
     note: false
@@ -1065,10 +1109,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "302":
     id: "302"
-    taskid: e1017c16-fda4-40a2-8c95-a497d3d2140f
+    taskid: a660ad44-f759-435f-842e-56953037c6f1
     type: condition
     task:
-      id: e1017c16-fda4-40a2-8c95-a497d3d2140f
+      id: a660ad44-f759-435f-842e-56953037c6f1
       version: -1
       name: Verify Alert Description
       description: |
@@ -1094,8 +1138,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 5170,
-          "y": -410
+          "x": 5040,
+          "y": -80
         }
       }
     note: false
@@ -1107,10 +1151,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "303":
     id: "303"
-    taskid: a0135392-68d7-4fdc-82b4-ddbede0a1220
+    taskid: 011d36b8-b6f5-4cfd-88a5-890e71415f95
     type: regular
     task:
-      id: a0135392-68d7-4fdc-82b4-ddbede0a1220
+      id: 011d36b8-b6f5-4cfd-88a5-890e71415f95
       version: -1
       name: Verify Context Error - Alert Description
       description: Prints an error entry with a given message
@@ -1126,8 +1170,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 5170,
-          "y": -25
+          "x": 5040,
+          "y": 165
         }
       }
     note: false
@@ -1139,10 +1183,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "304":
     id: "304"
-    taskid: fe34c69e-4f46-40e1-83ee-b02bbc39bf32
+    taskid: a473c374-8522-426c-8527-d4d66f830eee
     type: condition
     task:
-      id: fe34c69e-4f46-40e1-83ee-b02bbc39bf32
+      id: a473c374-8522-426c-8527-d4d66f830eee
       version: -1
       name: Verify Agent IP Address
       description: |
@@ -1168,8 +1212,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 5570,
-          "y": -410
+          "x": 5440,
+          "y": -80
         }
       }
     note: false
@@ -1181,10 +1225,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "305":
     id: "305"
-    taskid: 77258ec7-42a2-4bec-88bd-f29f7f233402
+    taskid: b4458d27-4232-4ce8-8909-115dde0cef4c
     type: regular
     task:
-      id: 77258ec7-42a2-4bec-88bd-f29f7f233402
+      id: b4458d27-4232-4ce8-8909-115dde0cef4c
       version: -1
       name: Verify Context Error - Agent IP Address
       description: Prints an error entry with a given message
@@ -1200,8 +1244,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 5570,
-          "y": -25
+          "x": 5440,
+          "y": 165
         }
       }
     note: false
@@ -1213,10 +1257,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "306":
     id: "306"
-    taskid: 826727e1-83c1-44a9-835e-4cb5f15489ef
+    taskid: 28bcbd65-8a84-4e18-8d61-83c08ea61d8a
     type: condition
     task:
-      id: 826727e1-83c1-44a9-835e-4cb5f15489ef
+      id: 28bcbd65-8a84-4e18-8d61-83c08ea61d8a
       version: -1
       name: Verify Agent Hostname
       description: |
@@ -1242,8 +1286,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 5970,
-          "y": -410
+          "x": 5840,
+          "y": -80
         }
       }
     note: false
@@ -1255,10 +1299,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "307":
     id: "307"
-    taskid: d6f84916-ae61-4c52-80a5-d450e2da259a
+    taskid: c1af8603-9e62-43ce-86a6-954553abf1bb
     type: regular
     task:
-      id: d6f84916-ae61-4c52-80a5-d450e2da259a
+      id: c1af8603-9e62-43ce-86a6-954553abf1bb
       version: -1
       name: Verify Context Error - Agent Hostname
       description: Prints an error entry with a given message
@@ -1274,8 +1318,156 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 5970,
-          "y": -25
+          "x": 5840,
+          "y": 165
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+    isoversize: false
+    isautoswitchedtoquietmode: false
+  "308":
+    id: "308"
+    taskid: 0092afc4-d804-454c-8c07-c7acc97d8d64
+    type: condition
+    task:
+      id: 0092afc4-d804-454c-8c07-c7acc97d8d64
+      version: -1
+      name: Verify Mitre Tactic ID & Name
+      description: |
+        Verify that the ‘PaloAltoNetworksXDR.Alert.mitre_tactic_id_and_name’ context key was extracted correctly.
+      type: condition
+      iscommand: false
+      brand: ""
+    nexttasks:
+      ' Verified':
+      - "113"
+      '#default#':
+      - "309"
+    separatecontext: false
+    conditions:
+    - label: ' Verified'
+      condition:
+      - - operator: isNotEmpty
+          left:
+            value:
+              simple: PaloAltoNetworksXDR.Alert.mitre_tactic_id_and_name
+            iscontext: true
+    continueonerrortype: ""
+    view: |-
+      {
+        "position": {
+          "x": 6250,
+          "y": -80
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+    isoversize: false
+    isautoswitchedtoquietmode: false
+  "309":
+    id: "309"
+    taskid: 597c3ef8-ba18-43d8-8adc-57c92d54d6af
+    type: regular
+    task:
+      id: 597c3ef8-ba18-43d8-8adc-57c92d54d6af
+      version: -1
+      name: Verify Context Error - Mitre Tactic ID & Name
+      description: Prints an error entry with a given message
+      scriptName: PrintErrorEntry
+      type: regular
+      iscommand: false
+      brand: ""
+    scriptarguments:
+      message:
+        simple: "The 'PaloAltoNetworksXDR.Alert.mitre_tactic_id_and_name' context key not extracted properly. This may indicate that one or more of the following changes have been made to the 'Cortex XDR Malware - Incident Enrichment' playbook:\n1- The 'xdr-get-incident-extra-data' automation outputs have been modified and no longer contain the 'PaloAltoNetworksXDR.Incident.network_artifacts' context key. \n2- The 'incident_id' input configuration was changed for the 'xdr-get-incident-extra-data' automation used in the 'Get Full Incident Details' task."
+    separatecontext: false
+    continueonerrortype: ""
+    view: |-
+      {
+        "position": {
+          "x": 6250,
+          "y": 165
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+    isoversize: false
+    isautoswitchedtoquietmode: false
+  "310":
+    id: "310"
+    taskid: dcca840c-427a-49a0-889d-87bf1c6a5816
+    type: condition
+    task:
+      id: dcca840c-427a-49a0-889d-87bf1c6a5816
+      version: -1
+      name: Verify Mitre Technique ID & Name
+      description: |
+        Verify that the ‘PaloAltoNetworksXDR.Alert.mitre_technique_id_and_name’ context key was extracted correctly.
+      type: condition
+      iscommand: false
+      brand: ""
+    nexttasks:
+      ' Verified':
+      - "113"
+      '#default#':
+      - "311"
+    separatecontext: false
+    conditions:
+    - label: ' Verified'
+      condition:
+      - - operator: isNotEmpty
+          left:
+            value:
+              simple: PaloAltoNetworksXDR.Alert.mitre_technique_id_and_name
+            iscontext: true
+    continueonerrortype: ""
+    view: |-
+      {
+        "position": {
+          "x": 6660,
+          "y": -80
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+    isoversize: false
+    isautoswitchedtoquietmode: false
+  "311":
+    id: "311"
+    taskid: 4f19afda-9228-4c14-8b86-aecd1d3046c2
+    type: regular
+    task:
+      id: 4f19afda-9228-4c14-8b86-aecd1d3046c2
+      version: -1
+      name: Verify Context Error - Mitre Technique ID & Name
+      description: Prints an error entry with a given message
+      scriptName: PrintErrorEntry
+      type: regular
+      iscommand: false
+      brand: ""
+    scriptarguments:
+      message:
+        simple: "The 'PaloAltoNetworksXDR.Alert.mitre_technique_id_and_name' context key not extracted properly. This may indicate that one or more of the following changes have been made to the 'Cortex XDR Malware - Incident Enrichment' playbook:\n1- The 'xdr-get-incident-extra-data' automation outputs have been modified and no longer contain the 'PaloAltoNetworksXDR.Incident.network_artifacts' context key. \n2- The 'incident_id' input configuration was changed for the 'xdr-get-incident-extra-data' automation used in the 'Get Full Incident Details' task."
+    separatecontext: false
+    continueonerrortype: ""
+    view: |-
+      {
+        "position": {
+          "x": 6660,
+          "y": 165
         }
       }
     note: false
@@ -1287,10 +1479,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "312":
     id: "312"
-    taskid: eb17e1b4-26d2-4c11-83be-fda79c65507a
+    taskid: bd716226-74dc-4d37-8ba1-b6b68e76fa4f
     type: condition
     task:
-      id: eb17e1b4-26d2-4c11-83be-fda79c65507a
+      id: bd716226-74dc-4d37-8ba1-b6b68e76fa4f
       version: -1
       name: Verify Starred
       description: |
@@ -1316,8 +1508,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 6370,
-          "y": -410
+          "x": 7060,
+          "y": -80
         }
       }
     note: false
@@ -1329,10 +1521,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "313":
     id: "313"
-    taskid: ac9a8406-0e52-4237-8f57-dfeb97f4f5d5
+    taskid: bdadc694-c5fa-423d-872c-2e7422c58e2d
     type: regular
     task:
-      id: ac9a8406-0e52-4237-8f57-dfeb97f4f5d5
+      id: bdadc694-c5fa-423d-872c-2e7422c58e2d
       version: -1
       name: Verify Context Error - Starred
       description: Prints an error entry with a given message
@@ -1348,8 +1540,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 6370,
-          "y": -25
+          "x": 7060,
+          "y": 165
         }
       }
     note: false
@@ -1361,10 +1553,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "331":
     id: "331"
-    taskid: f45150ff-cc9f-43bb-8fb7-04cd6f21c515
+    taskid: 638b2658-f51f-4a16-8d82-c2cd5f8c42a3
     type: regular
     task:
-      id: f45150ff-cc9f-43bb-8fb7-04cd6f21c515
+      id: 638b2658-f51f-4a16-8d82-c2cd5f8c42a3
       version: -1
       name: Get Evidence Entries
       description: Collect evidence entries.
@@ -1383,7 +1575,7 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 1140,
+          "x": 930,
           "y": -420
         }
       }
@@ -1396,10 +1588,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "332":
     id: "332"
-    taskid: 75e7e92b-3c5c-4418-834a-8a62c7f91bcd
+    taskid: 92731dd3-bc06-4650-8c2e-1deb72c1e481
     type: condition
     task:
-      id: 75e7e92b-3c5c-4418-834a-8a62c7f91bcd
+      id: 92731dd3-bc06-4650-8c2e-1deb72c1e481
       version: -1
       name: Verify Evidence
       description: 'Verify that the hunting results have been marked as evidence. Considering that each of the hunting tasks are the only that marks items as evidence, we can assume that the hunting results were classified as evidence if the ''Entry.ID'' context key is present and contains 21 items. '
@@ -1569,7 +1761,7 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 1140,
+          "x": 930,
           "y": -255
         }
       }
@@ -1582,10 +1774,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "333":
     id: "333"
-    taskid: 57029e43-5fa2-4fb4-830a-0f0e68cc6b74
+    taskid: 752a12f7-a72e-46d8-8f34-a8766d3a3fdd
     type: regular
     task:
-      id: 57029e43-5fa2-4fb4-830a-0f0e68cc6b74
+      id: 752a12f7-a72e-46d8-8f34-a8766d3a3fdd
       version: -1
       name: Verify Incident Evidence Error
       description: Prints an error entry with a given message
@@ -1601,7 +1793,7 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 1140,
+          "x": 930,
           "y": -25
         }
       }
@@ -1614,10 +1806,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "334":
     id: "334"
-    taskid: ccb861f9-6a00-493c-8205-deffa9afee96
+    taskid: 783db079-ce9b-4dd0-86f3-c078230fd49d
     type: title
     task:
-      id: ccb861f9-6a00-493c-8205-deffa9afee96
+      id: 783db079-ce9b-4dd0-86f3-c078230fd49d
       version: -1
       name: Done verifying Incident Evidence
       type: title
@@ -1632,8 +1824,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 750,
-          "y": -60
+          "x": 540,
+          "y": -80
         }
       }
     note: false
@@ -1645,10 +1837,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "335":
     id: "335"
-    taskid: 7e491fa8-343d-4f60-8afc-5eb5a897ca6e
+    taskid: 74d276cf-61e1-4c80-8919-d7515b2c528c
     type: title
     task:
-      id: 7e491fa8-343d-4f60-8afc-5eb5a897ca6e
+      id: 74d276cf-61e1-4c80-8919-d7515b2c528c
       version: -1
       name: Check Playbook Outputs
       type: title
@@ -1657,24 +1849,13 @@ tasks:
       description: ''
     nexttasks:
       '#none#':
-      - "73"
-      - "46"
-      - "75"
-      - "294"
-      - "74"
-      - "296"
-      - "298"
-      - "300"
-      - "302"
-      - "304"
-      - "306"
-      - "312"
+      - "366"
     separatecontext: false
     continueonerrortype: ""
     view: |-
       {
         "position": {
-          "x": 1975,
+          "x": 1765,
           "y": -550
         }
       }
@@ -1687,10 +1868,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "336":
     id: "336"
-    taskid: 28b150cb-8b59-4b37-8739-09caabe9a9ff
+    taskid: f9400d92-fca4-4e15-8c71-35a24fc9ee8b
     type: condition
     task:
-      id: 28b150cb-8b59-4b37-8739-09caabe9a9ff
+      id: f9400d92-fca4-4e15-8c71-35a24fc9ee8b
       version: -1
       name: Verify Host Activity
       description: Verify that the 'Host_Activity’ context key was extracted.
@@ -1732,10 +1913,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "337":
     id: "337"
-    taskid: cd25053e-c04a-41b3-857d-0d2cf779b02a
+    taskid: ce70374b-9f58-4c59-8c76-43c911c2dc36
     type: regular
     task:
-      id: cd25053e-c04a-41b3-857d-0d2cf779b02a
+      id: ce70374b-9f58-4c59-8c76-43c911c2dc36
       version: -1
       name: Verify Context Error - Host Activity
       description: Prints an error entry with a given message
@@ -1768,10 +1949,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "338":
     id: "338"
-    taskid: 5971b384-b09c-4980-8ec7-1ceb4cbb6f78
+    taskid: 75a44135-71ba-4e53-818e-5e4de376218d
     type: title
     task:
-      id: 5971b384-b09c-4980-8ec7-1ceb4cbb6f78
+      id: 75a44135-71ba-4e53-818e-5e4de376218d
       version: -1
       name: Done verifying context data
       type: title
@@ -1787,7 +1968,7 @@ tasks:
       {
         "position": {
           "x": 70,
-          "y": -60
+          "y": -80
         }
       }
     note: false
@@ -1799,10 +1980,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "339":
     id: "339"
-    taskid: 99ec7208-eb2b-40c1-8e52-c778c4666823
+    taskid: 63efae26-6bfd-4c2d-8882-222d465ebae7
     type: condition
     task:
-      id: 99ec7208-eb2b-40c1-8e52-c778c4666823
+      id: 63efae26-6bfd-4c2d-8882-222d465ebae7
       version: -1
       name: Verify Attacker Network Activity
       description: Verify that the 'Attacker_Network_Activity’ context key was extracted.
@@ -1844,10 +2025,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "340":
     id: "340"
-    taskid: a718190c-ed16-4371-821d-8cd5ec70b60f
+    taskid: e681400e-b63c-4198-8699-e8214ea2de33
     type: regular
     task:
-      id: a718190c-ed16-4371-821d-8cd5ec70b60f
+      id: e681400e-b63c-4198-8699-e8214ea2de33
       version: -1
       name: Verify Context Error - Attacker Network Activity
       description: Prints an error entry with a given message
@@ -1880,10 +2061,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "341":
     id: "341"
-    taskid: 4ec267ac-6971-4506-8780-5119a9a22dc8
+    taskid: 1746362c-9ca6-458d-8301-a99883f91e3c
     type: condition
     task:
-      id: 4ec267ac-6971-4506-8780-5119a9a22dc8
+      id: 1746362c-9ca6-458d-8301-a99883f91e3c
       version: -1
       name: Verify Hunt File Hash
       description: Verify that the 'Hunt_File_Hash’ context key was extracted.
@@ -1925,10 +2106,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "342":
     id: "342"
-    taskid: 3d1983b0-83c8-457a-8651-dc5bcddda789
+    taskid: 42bd6f22-f589-49bb-82d1-3dbfafb44830
     type: regular
     task:
-      id: 3d1983b0-83c8-457a-8651-dc5bcddda789
+      id: 42bd6f22-f589-49bb-82d1-3dbfafb44830
       version: -1
       name: Verify Context Error - Hunt File Hash
       description: Prints an error entry with a given message
@@ -1961,10 +2142,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "343":
     id: "343"
-    taskid: 143cdd57-6ca1-47e6-883f-6843c52f864a
+    taskid: 64686c6d-7d1c-4614-8492-bbbf00bc4e01
     type: condition
     task:
-      id: 143cdd57-6ca1-47e6-883f-6843c52f864a
+      id: 64686c6d-7d1c-4614-8492-bbbf00bc4e01
       version: -1
       name: Verify Reconnaissance
       description: Verify that the 'Reconnaissance’ context key was extracted.
@@ -2006,10 +2187,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "344":
     id: "344"
-    taskid: 5b18790b-9c45-4e93-81bb-57c9f549017f
+    taskid: 63577ae2-435c-4073-88c7-dc85930eb66f
     type: regular
     task:
-      id: 5b18790b-9c45-4e93-81bb-57c9f549017f
+      id: 63577ae2-435c-4073-88c7-dc85930eb66f
       version: -1
       name: Verify Context Error - Reconnaissance
       description: Prints an error entry with a given message
@@ -2042,10 +2223,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "345":
     id: "345"
-    taskid: 9e6908ef-47f4-4377-8d82-35422c1ecbf4
+    taskid: f1d9af51-59c8-481d-808d-3be964b0a4a2
     type: condition
     task:
-      id: 9e6908ef-47f4-4377-8d82-35422c1ecbf4
+      id: f1d9af51-59c8-481d-808d-3be964b0a4a2
       version: -1
       name: Verify Initial Access
       description: Verify that the 'Initial_Access’ context key was extracted.
@@ -2087,10 +2268,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "346":
     id: "346"
-    taskid: 83ba8ff5-f87c-4b67-8a26-9e9538da8caf
+    taskid: 42b24657-45f8-466c-8b9b-c46a5f02e1a3
     type: regular
     task:
-      id: 83ba8ff5-f87c-4b67-8a26-9e9538da8caf
+      id: 42b24657-45f8-466c-8b9b-c46a5f02e1a3
       version: -1
       name: Verify Context Error - Initial Access
       description: Prints an error entry with a given message
@@ -2123,10 +2304,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "347":
     id: "347"
-    taskid: 342a2178-ea03-4c9b-8c4b-a8e69475b84b
+    taskid: 433016ae-08b3-4b6f-8e10-6c63f5a6018a
     type: condition
     task:
-      id: 342a2178-ea03-4c9b-8c4b-a8e69475b84b
+      id: 433016ae-08b3-4b6f-8e10-6c63f5a6018a
       version: -1
       name: Verify Execution
       description: Verify that the 'Execution’ context key was extracted.
@@ -2168,10 +2349,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "348":
     id: "348"
-    taskid: 4ff0104d-a943-4c5f-84dc-b9fe556304a9
+    taskid: 4db87b53-c5e9-4ec6-8e45-20551021c500
     type: regular
     task:
-      id: 4ff0104d-a943-4c5f-84dc-b9fe556304a9
+      id: 4db87b53-c5e9-4ec6-8e45-20551021c500
       version: -1
       name: Verify Context Error - Execution
       description: Prints an error entry with a given message
@@ -2204,10 +2385,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "349":
     id: "349"
-    taskid: 43659daf-28d8-4c0b-8c49-4569e16953d5
+    taskid: 1f0f8309-e58c-4e3b-880c-285c6b23542e
     type: condition
     task:
-      id: 43659daf-28d8-4c0b-8c49-4569e16953d5
+      id: 1f0f8309-e58c-4e3b-880c-285c6b23542e
       version: -1
       name: Verify Persistence
       description: Verify that the 'Persistence’ context key was extracted.
@@ -2249,10 +2430,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "350":
     id: "350"
-    taskid: c12f07b1-95d6-41e3-8098-9d6343472f8f
+    taskid: 744078e9-826c-4c2b-8f6b-0224dbab0ea5
     type: regular
     task:
-      id: c12f07b1-95d6-41e3-8098-9d6343472f8f
+      id: 744078e9-826c-4c2b-8f6b-0224dbab0ea5
       version: -1
       name: Verify Context Error - Persistence
       description: Prints an error entry with a given message
@@ -2285,10 +2466,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "351":
     id: "351"
-    taskid: 398fd920-d7f5-45ef-8072-7696baf1499a
+    taskid: b114d53b-8d27-4592-8607-40791100430c
     type: condition
     task:
-      id: 398fd920-d7f5-45ef-8072-7696baf1499a
+      id: b114d53b-8d27-4592-8607-40791100430c
       version: -1
       name: Verify Privilege Escalation
       description: Verify that the 'Privilege_Escalation’ context key was extracted.
@@ -2330,10 +2511,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "352":
     id: "352"
-    taskid: 9d660e74-d217-415a-863e-87b37a113adf
+    taskid: 68e0921b-3283-4c1d-8124-cdc9e15dea57
     type: regular
     task:
-      id: 9d660e74-d217-415a-863e-87b37a113adf
+      id: 68e0921b-3283-4c1d-8124-cdc9e15dea57
       version: -1
       name: Verify Context Error - Privilege Escalation
       description: Prints an error entry with a given message
@@ -2366,10 +2547,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "353":
     id: "353"
-    taskid: 03c432f1-4ee0-4b83-8cb6-d779b932ef36
+    taskid: 2df7361c-bf5c-4e53-8a04-70c23406a98c
     type: condition
     task:
-      id: 03c432f1-4ee0-4b83-8cb6-d779b932ef36
+      id: 2df7361c-bf5c-4e53-8a04-70c23406a98c
       version: -1
       name: Verify Defense Evasion
       description: Verify that the 'Defense_Evasion’ context key was extracted.
@@ -2411,10 +2592,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "354":
     id: "354"
-    taskid: f9c27970-a7ad-44af-867a-d08e61429c35
+    taskid: a5ebcc21-9847-4559-8405-a16ee1e7c39f
     type: regular
     task:
-      id: f9c27970-a7ad-44af-867a-d08e61429c35
+      id: a5ebcc21-9847-4559-8405-a16ee1e7c39f
       version: -1
       name: Verify Context Error - Defense Evasion
       description: Prints an error entry with a given message
@@ -2447,10 +2628,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "355":
     id: "355"
-    taskid: 7fddcae5-c480-436e-8691-d57dee621725
+    taskid: 82eadf53-9db8-45c6-8aa8-f9e1e0d9615e
     type: condition
     task:
-      id: 7fddcae5-c480-436e-8691-d57dee621725
+      id: 82eadf53-9db8-45c6-8aa8-f9e1e0d9615e
       version: -1
       name: Verify Discovery
       description: Verify that the 'Discovery’ context key was extracted.
@@ -2492,10 +2673,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "356":
     id: "356"
-    taskid: ae6d6c06-9d83-404f-809a-8c95e478b4ab
+    taskid: 4e51b10d-b9d9-4098-860a-30b6fd98762d
     type: regular
     task:
-      id: ae6d6c06-9d83-404f-809a-8c95e478b4ab
+      id: 4e51b10d-b9d9-4098-860a-30b6fd98762d
       version: -1
       name: Verify Context Error - Discovery
       description: Prints an error entry with a given message
@@ -2528,10 +2709,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "357":
     id: "357"
-    taskid: 71e6f2ea-012b-40f3-8eb1-b2a75339f83b
+    taskid: a667191a-b973-4c29-849b-5cbf448c5400
     type: condition
     task:
-      id: 71e6f2ea-012b-40f3-8eb1-b2a75339f83b
+      id: a667191a-b973-4c29-849b-5cbf448c5400
       version: -1
       name: Verify Lateral Movement
       description: Verify that the 'Lateral_Movement’ context key was extracted.
@@ -2573,10 +2754,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "358":
     id: "358"
-    taskid: 88562859-81c6-45f6-8fee-762811cb8090
+    taskid: 679b56b4-118c-4ad1-8f28-b6d793afccdd
     type: regular
     task:
-      id: 88562859-81c6-45f6-8fee-762811cb8090
+      id: 679b56b4-118c-4ad1-8f28-b6d793afccdd
       version: -1
       name: Verify Context Error - Lateral Movement
       description: Prints an error entry with a given message
@@ -2609,10 +2790,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "359":
     id: "359"
-    taskid: 7063a409-47b8-46e5-8201-260a2e738faa
+    taskid: 39f79842-bd00-44b8-80ac-f9bf146d8c84
     type: condition
     task:
-      id: 7063a409-47b8-46e5-8201-260a2e738faa
+      id: 39f79842-bd00-44b8-80ac-f9bf146d8c84
       version: -1
       name: Verify Collection
       description: Verify that the 'Collection’ context key was extracted.
@@ -2654,10 +2835,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "360":
     id: "360"
-    taskid: 22e3c82e-1ca2-42b5-8541-ff4ae9953522
+    taskid: 6d8b48be-9035-4cef-8dd1-afb24542a4d1
     type: regular
     task:
-      id: 22e3c82e-1ca2-42b5-8541-ff4ae9953522
+      id: 6d8b48be-9035-4cef-8dd1-afb24542a4d1
       version: -1
       name: Verify Context Error - Collection
       description: Prints an error entry with a given message
@@ -2690,10 +2871,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "361":
     id: "361"
-    taskid: 1de1d3c4-61de-4ff6-86b9-b3f836e16945
+    taskid: eac34397-328d-4c36-83e2-669c4a82539b
     type: condition
     task:
-      id: 1de1d3c4-61de-4ff6-86b9-b3f836e16945
+      id: eac34397-328d-4c36-83e2-669c4a82539b
       version: -1
       name: Verify Command And Control
       description: Verify that the 'Command_And_Control’ context key was extracted.
@@ -2735,10 +2916,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "362":
     id: "362"
-    taskid: be37ade9-246c-4354-82b5-43b45d31ce99
+    taskid: a09f83f6-5d73-4e49-85ef-7dbe3d5b299b
     type: regular
     task:
-      id: be37ade9-246c-4354-82b5-43b45d31ce99
+      id: a09f83f6-5d73-4e49-85ef-7dbe3d5b299b
       version: -1
       name: Verify Context Error - Command And Control
       description: Prints an error entry with a given message
@@ -2771,10 +2952,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "363":
     id: "363"
-    taskid: f9b03b7b-fab8-4864-8a29-f81443b1f84e
+    taskid: b224c7bb-9460-4b5b-8154-7dbc4ab21d76
     type: condition
     task:
-      id: f9b03b7b-fab8-4864-8a29-f81443b1f84e
+      id: b224c7bb-9460-4b5b-8154-7dbc4ab21d76
       version: -1
       name: Verify Impact Techniques
       description: Verify that the 'Impact_techniques’ context key was extracted.
@@ -2816,10 +2997,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "364":
     id: "364"
-    taskid: e52d2539-d961-4f22-8dad-e206e833fb0d
+    taskid: 41f55b8b-0ae9-4226-8873-cc565286d4c9
     type: regular
     task:
-      id: e52d2539-d961-4f22-8dad-e206e833fb0d
+      id: 41f55b8b-0ae9-4226-8873-cc565286d4c9
       version: -1
       name: Verify Context Error - Impact Techniques
       description: Prints an error entry with a given message
@@ -2852,10 +3033,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "365":
     id: "365"
-    taskid: d7726820-8235-4fff-8a7c-2f56d08c9e26
+    taskid: 2d34789e-851a-441d-8f36-0709b085819a
     type: title
     task:
-      id: d7726820-8235-4fff-8a7c-2f56d08c9e26
+      id: 2d34789e-851a-441d-8f36-0709b085819a
       version: -1
       name: Done
       type: title
@@ -2868,7 +3049,7 @@ tasks:
       {
         "position": {
           "x": 540,
-          "y": 140
+          "y": 250
         }
       }
     note: false
@@ -2880,20 +3061,20 @@ tasks:
     isautoswitchedtoquietmode: false
   "366":
     id: "366"
-    taskid: 6513f3c7-2ebb-433b-8d24-e65d67ff1f17
+    taskid: a6713fd8-827f-4339-845b-def430819831
     type: condition
     task:
-      id: 6513f3c7-2ebb-433b-8d24-e65d67ff1f17
+      id: a6713fd8-827f-4339-845b-def430819831
       version: -1
-      name: Are the PaloAltoNetworksXDR Alert and Mitre keys defined?
+      name: Is the PaloAltoNetworksXDR Alert key defined?
       type: condition
       iscommand: false
       brand: ""
     nexttasks:
       '#default#':
-      - "365"
+      - "113"
       "yes":
-      - "84"
+      - "112"
     separatecontext: false
     conditions:
     - label: "yes"
@@ -2903,24 +3084,12 @@ tasks:
             value:
               simple: PaloAltoNetworksXDR.Alert
             iscontext: true
-          right:
-            value: {}
-      - - operator: isNotEmpty
-          left:
-            value:
-              simple: PaloAltoNetworksXDR.Alert.mitre_technique_id_and_name
-            iscontext: true
-      - - operator: isNotEmpty
-          left:
-            value:
-              simple: PaloAltoNetworksXDR.Alert.mitre_tactic_id_and_name
-            iscontext: true
     continueonerrortype: ""
     view: |-
       {
         "position": {
-          "x": 540,
-          "y": -850
+          "x": 1765,
+          "y": -420
         }
       }
     note: false
@@ -2934,8 +3103,16 @@ view: |-
   {
     "linkLabelsPosition": {
       "220_338_Verified": 0.16,
-      "306_113_ Verified": 0.73,
-      "312_113_ Verified": 0.72,
+      "294_113_ Verified": 0.11,
+      "296_113_ Verified": 0.1,
+      "298_113_ Verified": 0.1,
+      "300_113_ Verified": 0.1,
+      "302_113_ Verified": 0.1,
+      "304_113_ Verified": 0.1,
+      "306_113_ Verified": 0.1,
+      "308_113_ Verified": 0.1,
+      "310_113_ Verified": 0.1,
+      "312_113_ Verified": 0.1,
       "336_338_Verified": 0.2,
       "339_338_Verified": 0.1,
       "341_338_Verified": 0.1,
@@ -2950,15 +3127,19 @@ view: |-
       "359_338_Verified": 0.1,
       "361_338_Verified": 0.1,
       "363_338_Verified": 0.1,
-      "366_365_#default#": 0.19,
-      "73_116_#default#": 0.7
+      "366_112_yes": 0.55,
+      "46_113_Verified": 0.1,
+      "73_113_Verified": 0.3,
+      "73_116_#default#": 0.7,
+      "74_113_ Verified": 0.1,
+      "75_113_ Verified": 0.1
     },
     "paper": {
       "dimensions": {
-        "height": 1830,
-        "width": 12680,
+        "height": 1780,
+        "width": 13370,
         "x": -5930,
-        "y": -1625
+        "y": -1465
       }
     }
   }

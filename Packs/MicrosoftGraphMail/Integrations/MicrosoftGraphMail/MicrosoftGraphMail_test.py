@@ -672,8 +672,6 @@ def test_get_attachments_without_attachment_id(mocker, client):
 
     """
     from MicrosoftGraphMail import get_attachment_command
-    file_attachments_result = {'2': 'f1145f66-90fe-4604-a7ea-faac8c33684e-imageName:image2.png',
-                               '3': 'exampleID3-imageName:image3.png'}
     output_prefix = 'MSGraphMail(val.ID && val.ID == obj.ID)'
     with open('test_data/mail_with_attachments') as mail_json:
         user_id = 'ex@example.com'
@@ -684,12 +682,9 @@ def test_get_attachments_without_attachment_id(mocker, client):
         assert isinstance(res, List)
         assert len(res) == len(raw_response)
         for i, attachment in enumerate(res):
-            if isinstance(attachment, CommandResults):
-                output = attachment.to_context().get('EntryContext', {})
-                assert output.get(output_prefix).get('ID') == f'exampleID{i}'
-                assert output.get(output_prefix).get('Subject') == f'Test it{i}'
-            else:
-                assert attachment['File'] == file_attachments_result.get(str(i))
+            output = attachment.to_context().get('EntryContext', {})
+            assert output.get(output_prefix).get('ID') == f'exampleID{i}'
+            assert output.get(output_prefix).get('Subject') == f'Test it{i}'
 
 
 @pytest.mark.parametrize('client', [oproxy_client(), self_deployed_client()])

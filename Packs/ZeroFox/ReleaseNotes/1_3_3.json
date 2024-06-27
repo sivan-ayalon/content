@@ -1,4 +1,0 @@
-{
-    "breakingChanges": true,
-    "breakingChangesNotes": "Removed the **Fetch Limit** parameter to improve the **Fetch Incidents** implementation."
-}

@@ -7,6 +7,7 @@ import traceback
 import dateparser
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
+from typing import List
 
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 HOST = demisto.params().get('host')
@@ -78,7 +79,7 @@ def login(host=HOST, cov_id=None, username=USERNAME, password=PASSWORD, verify_s
     p = {'username': username, 'password': password}
     r = s.post(host + '/rest/login', data=p, verify=verify_ssl)
 
-    if r.status_code != 200:
+    if 200 != r.status_code:
         raise Exception("Failed to login to %s - %d" % (host, r.status_code))
 
     if not s.cookies:
@@ -625,13 +626,14 @@ def list_org():
 
     url = f'https://{HOST}/index'
     r = requests.get(url, verify=VERIFY_SSL)
-    org_names: list[dict] = []
+    org_names: List[dict] = []
 
     soup = BeautifulSoup(r.text, 'html.parser')
     for link in soup.find_all('a'):
         org_name = link.contents[0]
-        if org_name and org_name not in [i['org_name'] for i in org_names]:
-            org_names.append({'org_name': org_name})
+        if org_name:
+            if org_name not in [i['org_name'] for i in org_names]:
+                org_names.append({'org_name': org_name})
 
     return org_names
 

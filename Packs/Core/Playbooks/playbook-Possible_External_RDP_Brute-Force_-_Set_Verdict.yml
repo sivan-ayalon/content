@@ -178,10 +178,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "4":
     id: "4"
-    taskid: d3816b97-2a2f-4539-83ee-af6592faad20
+    taskid: 58c51221-40de-486f-8f63-ed71ce50ab4b
     type: condition
     task:
-      id: d3816b97-2a2f-4539-83ee-af6592faad20
+      id: 58c51221-40de-486f-8f63-ed71ce50ab4b
       version: -1
       name: Connection from unusual country?
       description: Check if the connection was made from an unusual country.
@@ -267,10 +267,10 @@ tasks:
     isautoswitchedtoquietmode: false
   "6":
     id: "6"
-    taskid: bc3eca1f-c99b-4630-884d-9e573739a061
+    taskid: 00bcc57e-7e18-4bab-8356-a1ef5348e646
     type: regular
     task:
-      id: bc3eca1f-c99b-4630-884d-9e573739a061
+      id: 00bcc57e-7e18-4bab-8356-a1ef5348e646
       version: -1
       name: Set related alerts
       description: Set a value in context under the key you entered.
@@ -301,7 +301,7 @@ tasks:
     timertriggers: []
     ignoreworker: false
     fieldMapping:
-    - incidentfield: Alert Search Results
+    - incidentfield: XDR Alert Search Results
       output:
         complex:
           root: inputs.RelatedAlerts

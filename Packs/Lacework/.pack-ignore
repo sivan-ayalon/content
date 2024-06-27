@@ -1,9 +1,6 @@
 [file:Lacework_image.png]
 ignore=IM111
 
-[file:2_0_0.md]
-ignore=RN115
-
 [known_words]
 aws
 cve
@@ -13,3 +10,4 @@ namespace
 severities
 suppressions
 workloads
+

@@ -4,7 +4,7 @@ from requests import Response
 from CommonServerUserPython import *  # noqa
 
 import urllib3
-from typing import Any
+from typing import Dict, Any
 import base64
 import re
 
@@ -42,12 +42,12 @@ INTERVAL = arg_to_number(demisto.args().get("interval_in_seconds", 30))
 
 class Client(BaseClient):
 
-    def __init__(self, url: str, auth: tuple, headers: dict, proxy: bool = False, verify: bool = False):
+    def __init__(self, url: str, auth: tuple, headers: Dict, proxy: bool = False, verify: bool = False):
         self.url = url
         self.headers = headers
         super().__init__(base_url=url, verify=verify, proxy=proxy, auth=auth, headers=headers)
 
-    def get_session_request(self, encoded_str: str) -> dict:
+    def get_session_request(self, encoded_str: str) -> Dict:
         """ Gets a session from the API.
             Args:
                 encoded_str: str - The string that contains username:password in base64.
@@ -58,7 +58,7 @@ class Client(BaseClient):
         self.headers['NSM-SDK-API'] = encoded_str
         return self._http_request(method='GET', url_suffix=url_suffix)
 
-    def list_domain_firewall_policy_request(self, domain_id: int) -> dict:
+    def list_domain_firewall_policy_request(self, domain_id: int) -> Dict:
         """ Gets the list of Firewall Policies defined in a particular domain.
             Args:
                 domain_id: int - The id of the domain.
@@ -68,7 +68,7 @@ class Client(BaseClient):
         url_suffix = f'/domain/{domain_id}/firewallpolicy'
         return self._http_request(method='GET', url_suffix=url_suffix)
 
-    def get_firewall_policy_request(self, policy_id: int) -> dict:
+    def get_firewall_policy_request(self, policy_id: int) -> Dict:
         """ Gets the Firewall Policy details.
             Args:
                 policy_id: int - The id of the policy.
@@ -78,7 +78,7 @@ class Client(BaseClient):
         url_suffix = f'/firewallpolicy/{policy_id}'
         return self._http_request(method='GET', url_suffix=url_suffix)
 
-    def create_firewall_policy_request(self, body: dict) -> dict:
+    def create_firewall_policy_request(self, body: Dict) -> Dict:
         """ Adds a new Firewall Policy and Access Rules.
             Args:
                 body: Dict - The params to the API call.
@@ -88,7 +88,7 @@ class Client(BaseClient):
         url_suffix = '/firewallpolicy'
         return self._http_request(method='POST', url_suffix=url_suffix, json_data=body)
 
-    def update_firewall_policy_request(self, body: dict, policy_id: int) -> dict:
+    def update_firewall_policy_request(self, body: Dict, policy_id: int) -> Dict:
         """ Updates an existing Firewall Policy and Access Rules.
             Args:
                 body: Dict - The params to the API call.
@@ -99,7 +99,7 @@ class Client(BaseClient):
         url_suffix = f'/firewallpolicy/{policy_id}'
         return self._http_request(method='PUT', url_suffix=url_suffix, json_data=body)
 
-    def delete_firewall_policy_request(self, policy_id: int) -> dict:
+    def delete_firewall_policy_request(self, policy_id: int) -> Dict:
         """ Updates an existing Firewall Policy and Access Rules.
             Args:
                 policy_id: int - The id of the updated policy.
@@ -109,7 +109,7 @@ class Client(BaseClient):
         url_suffix = f'/firewallpolicy/{policy_id}'
         return self._http_request(method='DELETE', url_suffix=url_suffix)
 
-    def list_domain_rule_objects_request(self, domain_id: int, rule_type: str) -> dict:
+    def list_domain_rule_objects_request(self, domain_id: int, rule_type: str) -> Dict:
         """ Gets the list of rule objects defined in a particular domain.
             Args:
                 domain_id: int - The id of the domain.
@@ -120,7 +120,7 @@ class Client(BaseClient):
         url_suffix = f'/domain/{domain_id}/ruleobject?type={rule_type}'
         return self._http_request(method='GET', url_suffix=url_suffix)
 
-    def get_rule_object_request(self, rule_id: int) -> dict:
+    def get_rule_object_request(self, rule_id: int) -> Dict:
         """ Gets the list of rule objects defined in a particular domain.
             Args:
                 rule_id: int - The id of the rule.
@@ -130,7 +130,7 @@ class Client(BaseClient):
         url_suffix = f'/ruleobject/{rule_id}'
         return self._http_request(method='GET', url_suffix=url_suffix)
 
-    def create_rule_object_request(self, body: dict) -> dict:
+    def create_rule_object_request(self, body: Dict) -> Dict:
         """ Gets the list of rule objects defined in a particular domain.
             Args:
                 body: Dict - The params to the API call.
@@ -140,7 +140,7 @@ class Client(BaseClient):
         url_suffix = '/ruleobject'
         return self._http_request(method='POST', url_suffix=url_suffix, json_data=body)
 
-    def update_rule_object_request(self, body: dict, rule_id: int) -> dict:
+    def update_rule_object_request(self, body: Dict, rule_id: int) -> Dict:
         """ Updates a Rule Object.
             Args:
                 body: Dict - The params to the API call.
@@ -151,7 +151,7 @@ class Client(BaseClient):
         url_suffix = f'/ruleobject/{rule_id}'
         return self._http_request(method='PUT', url_suffix=url_suffix, json_data=body, resp_type='response')
 
-    def delete_rule_object_request(self, rule_id: int) -> dict:
+    def delete_rule_object_request(self, rule_id: int) -> Dict:
         """ Updates a Rule Object.
             Args:
                 rule_id: int - The rule id.
@@ -162,7 +162,7 @@ class Client(BaseClient):
         return self._http_request(method='DELETE', url_suffix=url_suffix)
 
     def get_alerts_request(self, time_period: str, start_time: str, end_time: str, state: str,
-                           search: str, filter_arg: str, domain_id: int, page: str = None) -> dict:
+                           search: str, filter_arg: str, domain_id: int, page: str = None) -> Dict:
         """ Retrieves All Alerts.
             Args:
                 time_period: str - The time period of the alert.
@@ -195,7 +195,7 @@ class Client(BaseClient):
         url_suffix = '/alerts'
         return self._http_request(method='GET', url_suffix=url_suffix, params=params)
 
-    def get_alert_details_request(self, alert_id: int, sensor_id: int) -> dict:
+    def get_alert_details_request(self, alert_id: int, sensor_id: int) -> Dict:
         """ Retrieves the alert details.
             Args:
                 alert_id: int - The id of the relevant alert.
@@ -209,7 +209,7 @@ class Client(BaseClient):
         }
         return self._http_request(method='GET', url_suffix=url_suffix, params=params)
 
-    def get_attacks_request(self, attack_id: Optional[str]) -> dict:
+    def get_attacks_request(self, attack_id: str) -> Dict:
         """ If an attack id is given The command returns the details of the specific attack. Else, gets all available
         attack definitions in the Manager UI.
             Args:
@@ -224,7 +224,7 @@ class Client(BaseClient):
         response = self._http_request(method='GET', timeout=5000, url_suffix=url_suffix)
         return response
 
-    def get_domains_request(self, domain_id: Optional[int]) -> dict:
+    def get_domains_request(self, domain_id: Optional[int]) -> Dict:
         """ If a domain id is given The command returns the details of the specific domain.
             Else, gets all available domains.
             Args:
@@ -237,7 +237,7 @@ class Client(BaseClient):
             url_suffix = f'{url_suffix}/{domain_id}'
         return self._http_request(method='GET', url_suffix=url_suffix)
 
-    def get_sensors_request(self, domain_id: Optional[int]) -> dict:
+    def get_sensors_request(self, domain_id: Optional[int]) -> Dict:
         """ If a domain id is given The command returns the details of the sensors in the specific domain.
             Else, gets all available sensors.
             Args:
@@ -251,7 +251,7 @@ class Client(BaseClient):
             params['domain'] = domain_id
         return self._http_request(method='GET', url_suffix=url_suffix, params=params)
 
-    def get_ips_policies_request(self, domain_id: int) -> dict:
+    def get_ips_policies_request(self, domain_id: int) -> Dict:
         """ Gets all the IPS Policies defined in the specific domain.
             Args:
                 domain_id: int - The id of the relevant domain.
@@ -261,7 +261,7 @@ class Client(BaseClient):
         url_suffix = f'/domain/{domain_id}/ipspolicies'
         return self._http_request(method='GET', url_suffix=url_suffix)
 
-    def get_ips_policy_details_request(self, policy_id: int) -> dict:
+    def get_ips_policy_details_request(self, policy_id: int) -> Dict:
         """ Gets the policy details for the specific IPS policy.
             Args:
                 policy_id: int - The id of the relevant ips policy.
@@ -272,7 +272,7 @@ class Client(BaseClient):
         return self._http_request(method='GET', url_suffix=url_suffix)
 
     def update_alerts_request(self, time_period: str, start_time: str, end_time: str, state: str,
-                              search: str, filter_arg: str, body: dict) -> dict:
+                              search: str, filter_arg: str, body: Dict) -> Dict:
         """ Updates all relevant alerts.
             Args:
                 time_period: str - The time period of the alert.
@@ -300,7 +300,7 @@ class Client(BaseClient):
         url_suffix = '/alerts'
         return self._http_request(method='PUT', url_suffix=url_suffix, params=params, json_data=body)
 
-    def list_pcap_file_request(self, sensor_id: int) -> dict:
+    def list_pcap_file_request(self, sensor_id: int) -> Dict:
         """ Retrieves the list of captured PCAP files.
             Args:
                 sensor_id: int - the relevant sensor id.
@@ -310,7 +310,7 @@ class Client(BaseClient):
         url_suffix = f'/sensor/{sensor_id}/packetcapturepcapfiles'
         return self._http_request(method='GET', url_suffix=url_suffix)
 
-    def export_pcap_file_request(self, sensor_id: int, body: dict) -> Response:
+    def export_pcap_file_request(self, sensor_id: int, body: Dict) -> Response:
         """ Retrieves the list of captured PCAP files.
             Args:
                 sensor_id: int - The relevant sensor id.
@@ -322,7 +322,7 @@ class Client(BaseClient):
         self.headers['Accept'] = 'application/octet-stream'
         return self._http_request(method='PUT', url_suffix=url_suffix, json_data=body, resp_type='response')
 
-    def list_domain_device_request(self, domain_id: int) -> dict:
+    def list_domain_device_request(self, domain_id: int) -> Dict:
         """ Retrieves the list of devices in a domain.
             Args:
                 domain_id: int - The relevant domain id.
@@ -332,7 +332,7 @@ class Client(BaseClient):
         url_suffix = f'/domain/{domain_id}/device'
         return self._http_request(method='GET', url_suffix=url_suffix)
 
-    def list_device_interface_request(self, domain_id: int, device_id: int) -> dict[str, List]:
+    def list_device_interface_request(self, domain_id: int, device_id: int) -> Dict[str, List]:
         """ Retrieves the list of interfaces related to a device.
             Args:
                 device_id: int - The relevant device id.
@@ -344,7 +344,7 @@ class Client(BaseClient):
         return self._http_request(method='GET', url_suffix=url_suffix)
 
     def assign_device_policy_request(self, domain_id: int, device_id: int, pre_firewall_policy: Optional[str],
-                                     post_firewall_policy: Optional[str]) -> dict:
+                                     post_firewall_policy: Optional[str]) -> Dict:
         """ Assigns a policy to a device.
             Args:
                 device_id: int - The relevant device id.
@@ -359,7 +359,7 @@ class Client(BaseClient):
                      "firewallPolicyFirst": pre_firewall_policy}
         return self._http_request(method='PUT', url_suffix=url_suffix, json_data=json_data)
 
-    def list_device_policy_request(self, domain_id: int, device_id: Optional[int]) -> dict:
+    def list_device_policy_request(self, domain_id: int, device_id: Optional[int]) -> Dict:
         """ Retrieves the list of policies assigned to a device.
             Args:
                 device_id: int - The relevant device id.
@@ -375,7 +375,7 @@ class Client(BaseClient):
 
     def assign_interface_policy_request(self, domain_id: int, interface_id: int, firewall_policy: Optional[str],
                                         firewall_port_policy: Optional[str], ips_policy: Optional[str],
-                                        custom_policy_json: Optional[dict]) -> dict:
+                                        custom_policy_json: Optional[Dict]) -> Dict:
         """ Assigns a policy to an interface.
             Args:
                 domain_id: int - The relevant domain id.
@@ -397,7 +397,7 @@ class Client(BaseClient):
 
         return self._http_request(method='PUT', url_suffix=url_suffix, json_data=json_data)
 
-    def list_interface_policy_request(self, domain_id: int, interface_id: Optional[int]) -> dict:
+    def list_interface_policy_request(self, domain_id: int, interface_id: Optional[int]) -> Dict:
         """ Retrieves the list of policies assigned to an interface.
             Args:
                 domain_id: int - The relevant domain id.
@@ -411,7 +411,7 @@ class Client(BaseClient):
             url_suffix = f'/domain/{domain_id}/policyassignments/interface'
         return self._http_request(method='GET', url_suffix=url_suffix)
 
-    def get_device_configuration_request(self, device_id: int) -> dict:
+    def get_device_configuration_request(self, device_id: int) -> Dict:
         """ Retrieves the configuration of a device.
             Args:
                 device_id: int - The relevant device id.
@@ -424,7 +424,7 @@ class Client(BaseClient):
     def deploy_device_configuration_request(self, device_id: int, is_SSL_Push_Required: bool = False,
                                             is_GAM_Update_Required: bool = False,
                                             is_Sigset_Config_Push_Required: bool = False,
-                                            is_Botnet_Push_Required: bool = False) -> dict:
+                                            is_Botnet_Push_Required: bool = False) -> Dict:
         """ Deploy a device configuration.
             Args:
                 device_id: int - The relevant device id.
@@ -486,7 +486,7 @@ def get_session(client: Client, user_name_n_password: str) -> str:
     return encode_to_base64(f'{session.get("session")}:{session.get("userId")}')
 
 
-def pagination(records_list: List, limit: int, page: Optional[int], page_size: Optional[int]) -> List[dict]:
+def pagination(records_list: List, limit: int, page: Optional[int], page_size: Optional[int]) -> List[Dict]:
     """ Returns the wanted records.
     Args:
         records_list: List - The original list of objects.
@@ -652,7 +652,7 @@ def check_source_and_destination(source_rule_object_id: Optional[int], source_ru
             (not destination_rule_object_id and destination_rule_object_type):
         # If the user provides destination_rule_object_id he must provide destination_rule_object_type and vice versa
         raise Exception('Please provide both destination_rule_object_id and destination_rule_object_type.')
-    if create_or_update == 'create':    # noqa: SIM102
+    if create_or_update == 'create':
         # if the user wants to create a new firewall policy, he must provide a source rule or destination rule or both.
         if source_rule_object_id == -1 and destination_rule_object_id == -1:
             raise Exception('You must provide the source fields or destination fields or both.')
@@ -660,7 +660,7 @@ def check_source_and_destination(source_rule_object_id: Optional[int], source_ru
 
 def create_body_firewall_policy(domain: int, name: str, visible_to_child: bool, description: str, is_editable: bool,
                                 policy_type: str, rule_description: str, response_param: str, rule_enabled: bool,
-                                direction: str, source_object: List, destination_object: List) -> dict:
+                                direction: str, source_object: List, destination_object: List) -> Dict:
     """
     Args:
         domain: int - The id of the domain.
@@ -749,7 +749,7 @@ def create_body_create_rule(rule_type: str, address: List, number: int,
 
 
 def create_body_create_rule_for_v10(rule_type: str, address: List, number: int,
-                                    from_to_list: List[dict[str, Optional[Any]]], state: str = "Enabled") -> tuple:
+                                    from_to_list: List[Dict[str, Optional[Any]]], state: str = "Enabled") -> tuple:
     """ create part of the body for the command create_rule_object for v10
         Args:
             rule_type: str - The type of the rule.
@@ -761,7 +761,7 @@ def create_body_create_rule_for_v10(rule_type: str, address: List, number: int,
             Returns the body for the request.
         """
     # build a list of dictionaries with the state and the address
-    list_to_send: list[dict] = [
+    list_to_send: list[Dict] = [
         {"value": single_address, "state": STATE_TO_NUMBER.get(state)}
         for single_address in address]
     # for parameters with a range, we need to add the state to the dictionary
@@ -783,7 +783,7 @@ def create_body_create_rule_for_v10(rule_type: str, address: List, number: int,
 
 
 def create_body_update_rule_for_v10(rule_type: str, address: List, number: int,
-                                    from_to_list: List[dict[str, Optional[Any]]], state: str = "Enabled") -> tuple:
+                                    from_to_list: List[Dict[str, Optional[Any]]], state: str = "Enabled") -> tuple:
     """ create part of the body for the command update_rule_object for v10
         Args:
             rule_type: str - The type of the rule.
@@ -800,7 +800,7 @@ def create_body_update_rule_for_v10(rule_type: str, address: List, number: int,
     # AS you can tell from the 'update_rule_object_command', address is a list of dictionaries or strings.
     # The existing addresses are dictionaries and the upcoming addresses are strings
     # if the address is a dictionary, the user wants to delete and overwrite that's the reason we kept that address in the list.
-    list_to_send: list[dict] = []
+    list_to_send: list[Dict] = []
     for single_address in address:
         if type(single_address) is dict:  # if its a dict == its an existing address to overwrite, we saved from the 'get' call
             list_to_send.append({"value": single_address.get("value"),
@@ -835,7 +835,7 @@ def create_body_update_rule_for_v10(rule_type: str, address: List, number: int,
         }
 
 
-def modify_v10_results_to_v9_format(response: List[dict[Any, Any]]) -> List[dict[Any, Any]]:
+def modify_v10_results_to_v9_format(response: List[Dict[Any, Any]]) -> List[Dict[Any, Any]]:
     """
     Modify the response of v10 to be in the same format as in v9.
     The main difference is that in v10 the API returns the addresses in a list of dictionaries,
@@ -859,7 +859,7 @@ def modify_v10_results_to_v9_format(response: List[dict[Any, Any]]) -> List[dict
                 addresses = value[ADDRESS_LIST_MAP.get(key)]
                 for inner_dict in addresses:
                     temp_dict = {}
-                    for key in inner_dict:
+                    for key in inner_dict.keys():
                         # choose the relevant keys and values and saves them in a temp dict
                         if key == 'value':
                             address_list.append(inner_dict[key])
@@ -875,7 +875,7 @@ def modify_v10_results_to_v9_format(response: List[dict[Any, Any]]) -> List[dict
     return response
 
 
-def capitalize_key_first_letter(input_lst: List[dict], check_lst: List = []) -> List[dict]:
+def capitalize_key_first_letter(input_lst: List[Dict], check_lst: List = []) -> List[Dict]:
     """
         Capitalize the first letter of all keys in all given dictionaries,
         while keeping the rest of the key as it is.(can't use 'capitalize()').
@@ -900,7 +900,7 @@ def capitalize_key_first_letter(input_lst: List[dict], check_lst: List = []) -> 
     return capitalize_lst
 
 
-def flatten_and_capitalize(main_dict: dict, inner_dict_key: str, check_lst: List = []) -> dict:
+def flatten_and_capitalize(main_dict: Dict, inner_dict_key: str, check_lst: List = []) -> Dict:
     """
          Flatten a nested dictionary and capitalize the first letter of all the nested dictionary's key
         Args:
@@ -916,7 +916,7 @@ def flatten_and_capitalize(main_dict: dict, inner_dict_key: str, check_lst: List
     return main_dict
 
 
-def deploy_polling_message(status: dict, args: dict):
+def deploy_polling_message(status: Dict, args: Dict):
     """
     Builds a message and a fail or success list for the polling command
     Args:
@@ -975,7 +975,7 @@ def check_args_create_rule(rule_type: str, address: List, from_address: str, to_
                         f' address arguments should be empty.')
 
 
-def h_r_get_domains(children: List[dict], contents: List):
+def h_r_get_domains(children: List[Dict], contents: List):
     """ Creates the human readable for the command get_domains.
         Args:
             children: List[Dict] - A list of the children.
@@ -997,8 +997,8 @@ def h_r_get_domains(children: List[dict], contents: List):
             h_r_get_domains(child.get('childdomains', []), contents)
 
 
-def update_source_destination_object(obj: List[dict], rule_object_id: Optional[int], rule_object_type: Optional[str]) -> \
-        List[dict]:
+def update_source_destination_object(obj: List[Dict], rule_object_id: Optional[int], rule_object_type: Optional[str]) -> \
+        List[Dict]:
     """ Updates the source and destination objects in the command update_firewall_policy.
         Args:
             obj: List[Dict] - The relevant object.
@@ -1026,7 +1026,7 @@ def update_source_destination_object(obj: List[dict], rule_object_id: Optional[i
 
 
 def overwrite_source_destination_object(rule_object_id: Optional[int], rule_object_type: Optional[str], dest_or_src: str,
-                                        member_rule_list: dict) -> List:
+                                        member_rule_list: Dict) -> List:
     """ overwrite the source and destination objects in the command update_firewall_policy.
         Args:
             rule_object_id: Optional [int] - The id of the rule.
@@ -1048,7 +1048,7 @@ def overwrite_source_destination_object(rule_object_id: Optional[int], rule_obje
                 'RuleObjectType': rule_object_type
             }]
     else:
-        return member_rule_list.get(f'{dest_or_src}AddressObjectList', [dict])
+        return member_rule_list.get(f'{dest_or_src}AddressObjectList', [Dict])
 
 
 def update_filter(filter_arg: str) -> str:
@@ -1072,7 +1072,7 @@ def update_filter(filter_arg: str) -> str:
     return ';'.join(split_filter)
 
 
-def get_addresses_from_response(response: dict) -> List:
+def get_addresses_from_response(response: Dict) -> List:
     """ Returns the addresses from the response, for the human-readable in the command get_rule_object.
         Args:
             response: Dict - The response from the API.
@@ -1084,7 +1084,7 @@ def get_addresses_from_response(response: dict) -> List:
     if HOST in rule_type:
         return response.get(f'HostIPv{number}', {}).get(f'hostIPv{number}AddressList', [])
     elif ADDRESS_RANGE in rule_type:
-        return response.get(f'IPv{number}AddressRange', {}).get(f'IPV{number}RangeList', [dict])
+        return response.get(f'IPv{number}AddressRange', {}).get(f'IPV{number}RangeList', [Dict])
     else:  # 'NETWORK'
         return response.get(f'Network_IPV_{number}', {}).get(f'networkIPV{number}List', [])
 
@@ -1107,7 +1107,7 @@ def test_module(client: Client, username_n_password: str) -> str:
         raise Exception(e.message)
 
 
-def list_domain_firewall_policy_command(client: Client, args: dict) -> CommandResults:
+def list_domain_firewall_policy_command(client: Client, args: Dict) -> CommandResults:
     """ Gets the list of Firewall Policies defined in a particular domain.
     Args:
         client: client - A McAfeeNSM client.
@@ -1157,7 +1157,7 @@ def list_domain_firewall_policy_command(client: Client, args: dict) -> CommandRe
     )
 
 
-def get_firewall_policy_command(client: Client, args: dict) -> CommandResults:
+def get_firewall_policy_command(client: Client, args: Dict) -> CommandResults:
     """ Gets the Firewall Policy details.
     Args:
         client: client - A McAfeeNSM client.
@@ -1169,7 +1169,7 @@ def get_firewall_policy_command(client: Client, args: dict) -> CommandResults:
     include_rule_objects = argToBoolean(args.get('include_rule_objects', False))
     response = client.get_firewall_policy_request(policy_id)
     if not include_rule_objects:
-        member_rule_list = response.get('MemberDetails', {}).get('MemberRuleList', [dict])
+        member_rule_list = response.get('MemberDetails', {}).get('MemberRuleList', [Dict])
         updated_member_rule_list = []
         for member in member_rule_list:
             d = {
@@ -1207,7 +1207,7 @@ def get_firewall_policy_command(client: Client, args: dict) -> CommandResults:
     )
 
 
-def create_firewall_policy_command(client: Client, args: dict) -> CommandResults:
+def create_firewall_policy_command(client: Client, args: Dict) -> CommandResults:
     """ Adds a new Firewall Policy and Access Rules.
         Args:
             client: client - A McAfeeNSM client.
@@ -1257,7 +1257,7 @@ def create_firewall_policy_command(client: Client, args: dict) -> CommandResults
                           )
 
 
-def update_firewall_policy_command(client: Client, args: dict) -> CommandResults:
+def update_firewall_policy_command(client: Client, args: Dict) -> CommandResults:
     """ Updates the Firewall Policy details.
         Args:
             client: client - A McAfeeNSM client.
@@ -1296,12 +1296,12 @@ def update_firewall_policy_command(client: Client, args: dict) -> CommandResults
     if not policy_get_details.get('IsEditable'):
         raise Exception(f"The policy no.{policy_id} can't be edited")
 
-    member_rule_list = policy_get_details.get('MemberDetails', {}).get('MemberRuleList', [dict])[0]
-    domain = domain if domain else policy_get_details.get("DomainId")
-    name = name if name else policy_get_details.get("Name")
+    member_rule_list = policy_get_details.get('MemberDetails', {}).get('MemberRuleList', [Dict])[0]
+    domain = policy_get_details.get('DomainId') if not domain else domain
+    name = policy_get_details.get('Name') if not name else name
     visible_to_child = policy_get_details.get('VisibleToChild') if not visible_to_child \
         else argToBoolean(visible_to_child)
-    description = description if description else policy_get_details.get("Description")
+    description = policy_get_details.get('Description') if not description else description
     is_editable = policy_get_details.get('IsEditable') if not is_editable else argToBoolean(is_editable)
     policy_type = policy_get_details.get('PolicyType') if not policy_type else policy_type.upper()
     rule_description = member_rule_list.get('Description') if not rule_description else argToBoolean(rule_description)
@@ -1316,7 +1316,7 @@ def update_firewall_policy_command(client: Client, args: dict) -> CommandResults
                                                                  destination_rule_object_type, 'Destination',
                                                                  member_rule_list)
     else:
-        source_object = member_rule_list.get('SourceAddressObjectList', [dict])
+        source_object = member_rule_list.get('SourceAddressObjectList', [Dict])
         source_object = update_source_destination_object(source_object, source_rule_object_id, source_rule_object_type)
 
         destination_object = member_rule_list.get('DestinationAddressObjectList', [])
@@ -1331,7 +1331,7 @@ def update_firewall_policy_command(client: Client, args: dict) -> CommandResults
     return CommandResults(readable_output=f'The firewall policy no.{policy_id} was updated successfully')
 
 
-def delete_firewall_policy_command(client: Client, args: dict) -> CommandResults:
+def delete_firewall_policy_command(client: Client, args: Dict) -> CommandResults:
     """ Deletes the specified Firewall Policy.
         Args:
             client: client - A McAfeeNSM client.
@@ -1344,7 +1344,7 @@ def delete_firewall_policy_command(client: Client, args: dict) -> CommandResults
     return CommandResults(readable_output=f'The firewall policy no.{policy_id} was deleted successfully')
 
 
-def list_domain_rule_objects_command(client: Client, args: dict) -> CommandResults:
+def list_domain_rule_objects_command(client: Client, args: Dict) -> CommandResults:
     """ Gets the list of rule objects defined in a particular domain.
         Args:
             client: client - A McAfeeNSM client.
@@ -1395,7 +1395,7 @@ def list_domain_rule_objects_command(client: Client, args: dict) -> CommandResul
                           outputs_key_field='ruleobjId')
 
 
-def get_rule_object_command(client: Client, args: dict) -> CommandResults:
+def get_rule_object_command(client: Client, args: Dict) -> CommandResults:
     """ Gets the details of a Rule Object.
         Args:
             client: client - A McAfeeNSM client.
@@ -1432,7 +1432,7 @@ def get_rule_object_command(client: Client, args: dict) -> CommandResults:
                           outputs_key_field='ruleobjId')
 
 
-def create_rule_object_command(client: Client, args: dict) -> CommandResults:
+def create_rule_object_command(client: Client, args: Dict) -> CommandResults:
     """ Adds a new Rule Object.
         Args:
             client: client - A McAfeeNSM client.
@@ -1503,7 +1503,7 @@ def create_rule_object_command(client: Client, args: dict) -> CommandResults:
                           )
 
 
-def update_rule_object_command(client: Client, args: dict) -> CommandResults:
+def update_rule_object_command(client: Client, args: Dict) -> CommandResults:
     """ Updates a Rule Object.
         Args:
             client: client - A McAfeeNSM client.
@@ -1652,7 +1652,7 @@ def update_rule_object_command(client: Client, args: dict) -> CommandResults:
     return CommandResults(readable_output=f'The rule object no.{rule_id} was updated successfully.')
 
 
-def delete_rule_object_command(client: Client, args: dict) -> CommandResults:
+def delete_rule_object_command(client: Client, args: Dict) -> CommandResults:
     """ Deletes a Rule Object.
         Args:
             client: client - A McAfeeNSM client.
@@ -1665,7 +1665,7 @@ def delete_rule_object_command(client: Client, args: dict) -> CommandResults:
     return CommandResults(readable_output=f'The rule object no.{rule_id} was deleted successfully')
 
 
-def get_alerts_command(client: Client, args: dict) -> CommandResults:
+def get_alerts_command(client: Client, args: Dict) -> CommandResults:
     """ Retrieves All Alerts.
         Args:
             client: client - A McAfeeNSM client.
@@ -1765,7 +1765,7 @@ def get_alerts_command(client: Client, args: dict) -> CommandResults:
     )
 
 
-def get_alert_details_command(client: Client, args: dict) -> CommandResults:
+def get_alert_details_command(client: Client, args: Dict) -> CommandResults:
     """ Retrieves the relevant alert.
         Args:
             client: client - A McAfeeNSM client.
@@ -1831,7 +1831,7 @@ def get_alert_details_command(client: Client, args: dict) -> CommandResults:
     )
 
 
-def get_attacks_command(client: Client, args: dict) -> List:
+def get_attacks_command(client: Client, args: Dict) -> List:
     """ If an attack id is given The command returns the details for the specific attack.
         Else, gets all available attack definitions in the Manager UI.
         Args:
@@ -1841,8 +1841,9 @@ def get_attacks_command(client: Client, args: dict) -> List:
             A CommandResult object with The attack details or attacks list.
     """
     attack_id = args.get('attack_id')
-    if attack_id and not re.match('^0x[0-9A-Fa-f]{8}$', attack_id):
-        raise Exception('Error! Attack ID must be formatted as 32-bit hexadecimal number. for example: 0x1234BEEF')
+    if attack_id:
+        if not re.match('^0x[0-9A-Fa-f]{8}$', attack_id):
+            raise Exception('Error! Attack ID must be formatted as 32-bit hexadecimal number. for example: 0x1234BEEF')
 
     response = client.get_attacks_request(attack_id)
 
@@ -1895,7 +1896,7 @@ def get_attacks_command(client: Client, args: dict) -> List:
         )]
 
 
-def get_domains_command(client: Client, args: dict) -> CommandResults:
+def get_domains_command(client: Client, args: Dict) -> CommandResults:
     """ If a domain id is given The command returns the details for the specific domain.
         Else, gets all available domains.
         Args:
@@ -1944,7 +1945,7 @@ def get_domains_command(client: Client, args: dict) -> CommandResults:
     )
 
 
-def get_sensors_command(client: Client, args: dict) -> CommandResults:
+def get_sensors_command(client: Client, args: Dict) -> CommandResults:
     """ Gets the list of sensors available in the specified domain. If the domain is not specified, details of all
         the sensors in all domains will be provided.
         Args:
@@ -1961,7 +1962,7 @@ def get_sensors_command(client: Client, args: dict) -> CommandResults:
         raise Exception('Please provide both page and page_size arguments.')
 
     response = client.get_sensors_request(domain_id)
-    sensors_list = pagination(response.get('SensorDescriptor', [dict]), limit, page, page_size)
+    sensors_list = pagination(response.get('SensorDescriptor', [Dict]), limit, page, page_size)
     result_list = []
     for sensor in sensors_list:
         record = {
@@ -2018,7 +2019,7 @@ def get_sensors_command(client: Client, args: dict) -> CommandResults:
     )
 
 
-def get_ips_policies_command(client: Client, args: dict) -> CommandResults:
+def get_ips_policies_command(client: Client, args: Dict) -> CommandResults:
     """ Gets all the IPS Policies defined in the specific domain.
         Args:
             client: client - A McAfeeNSM client.
@@ -2034,7 +2035,7 @@ def get_ips_policies_command(client: Client, args: dict) -> CommandResults:
         raise Exception('Please provide both page and page_size arguments.')
 
     response = client.get_ips_policies_request(domain_id)
-    policies_list = pagination(response.get('PolicyDescriptorDetailsList', [dict]), limit, page, page_size)
+    policies_list = pagination(response.get('PolicyDescriptorDetailsList', [Dict]), limit, page, page_size)
     result_list = []
     for policy in policies_list:
         record = {
@@ -2072,7 +2073,7 @@ def get_ips_policies_command(client: Client, args: dict) -> CommandResults:
     )
 
 
-def get_ips_policy_details_command(client: Client, args: dict) -> CommandResults:
+def get_ips_policy_details_command(client: Client, args: Dict) -> CommandResults:
     """ gets the policy details for the specific IPS policy.
         Args:
             client: client - A McAfeeNSM client.
@@ -2127,7 +2128,7 @@ def get_ips_policy_details_command(client: Client, args: dict) -> CommandResults
     )
 
 
-def update_alerts_command(client: Client, args: dict) -> CommandResults:
+def update_alerts_command(client: Client, args: Dict) -> CommandResults:
     """ Updates all the relevant alerts.
         Args:
             client: client - A McAfeeNSM client.
@@ -2166,7 +2167,7 @@ def update_alerts_command(client: Client, args: dict) -> CommandResults:
     return get_alerts_command(client, args)
 
 
-def list_pcap_file_command(client: Client, args: dict) -> CommandResults:
+def list_pcap_file_command(client: Client, args: Dict) -> CommandResults:
     """ Retrieves the list of captured PCAP files.
         Args:
             client: client - A McAfeeNSM client.
@@ -2202,7 +2203,7 @@ def list_pcap_file_command(client: Client, args: dict) -> CommandResults:
     )
 
 
-def export_pcap_file_command(client: Client, args: dict) -> List:
+def export_pcap_file_command(client: Client, args: Dict) -> List:
     """ Exports the captured PCAP file.
         Args:
             client: client - A McAfeeNSM client.
@@ -2220,7 +2221,7 @@ def export_pcap_file_command(client: Client, args: dict) -> List:
     return [file_]
 
 
-def list_domain_device_command(client: Client, args: dict) -> CommandResults:
+def list_domain_device_command(client: Client, args: Dict) -> CommandResults:
     """
     Retrieves the list of devices related to a given domain.
     Args:
@@ -2250,7 +2251,7 @@ def list_domain_device_command(client: Client, args: dict) -> CommandResults:
     )
 
 
-def list_device_interface_command(client: Client, args: dict) -> CommandResults:
+def list_device_interface_command(client: Client, args: Dict) -> CommandResults:
     """
     Retrieves the list of interfaces related to a given device.
     Args:
@@ -2285,7 +2286,7 @@ def list_device_interface_command(client: Client, args: dict) -> CommandResults:
     )
 
 
-def assign_device_policy_command(client: Client, args: dict) -> CommandResults:
+def assign_device_policy_command(client: Client, args: Dict) -> CommandResults:
     """
     Assigns a policy to a device.
     Args:
@@ -2311,7 +2312,7 @@ def assign_device_policy_command(client: Client, args: dict) -> CommandResults:
         raw_response=response)
 
 
-def list_device_policy_command(client: Client, args: dict) -> CommandResults:
+def list_device_policy_command(client: Client, args: Dict) -> CommandResults:
     """
     Retrieves a list of policies related to the domain or a specific device.
     Args:
@@ -2345,7 +2346,7 @@ def list_device_policy_command(client: Client, args: dict) -> CommandResults:
     )
 
 
-def assign_interface_policy_command(client: Client, args: dict) -> CommandResults:
+def assign_interface_policy_command(client: Client, args: Dict) -> CommandResults:
     """
     Assigns an existing policy to an interface.
     Args:
@@ -2382,7 +2383,7 @@ def assign_interface_policy_command(client: Client, args: dict) -> CommandResult
     )
 
 
-def list_interface_policy_command(client: Client, args: dict) -> CommandResults:
+def list_interface_policy_command(client: Client, args: Dict) -> CommandResults:
     """
     Retrieves a list of policies related to the domain or a specific interface.
     Args:
@@ -2413,7 +2414,7 @@ def list_interface_policy_command(client: Client, args: dict) -> CommandResults:
     )
 
 
-def get_device_configuration_command(client: Client, args: dict) -> CommandResults:
+def get_device_configuration_command(client: Client, args: Dict) -> CommandResults:
     """
     Retrieves the configuration of a device(e.g pending changes).
     Args:
@@ -2444,7 +2445,7 @@ def get_device_configuration_command(client: Client, args: dict) -> CommandResul
 
 
 @polling_function(name='nsm-deploy-device-configuration', interval=INTERVAL, requires_polling_arg=False)
-def deploy_device_configuration_command(args: dict, client: Client) -> PollResult:
+def deploy_device_configuration_command(args: Dict, client: Client) -> PollResult:
     """
     Deploy the configuration of a device.(e.g activate pending changes).
     Args:
@@ -2522,7 +2523,7 @@ def main() -> None:  # pragma: no cover
     demisto.debug(f'Command being called is {command}')
     try:
 
-        headers: dict = {
+        headers: Dict = {
             'Accept': 'application/vnd.nsm.v1.0+json',
             'Content-Type': 'application/json'
         }
