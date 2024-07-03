@@ -1,0 +1,25 @@
+args:
+- description: The name of the integration instance to update with the parameters.
+  name: instance_name
+  required: true
+- description: The parameters to add to the instance. The keys can be the parameter's display name or code name.
+  name: parameters
+  type: keyValue
+  required: true
+comment: Update the parameters of an integration instance. The new fields override the parameters currently in the instance.
+commonfields:
+  id: SetIntegrationParameters
+  version: -1
+enabled: true
+name: SetIntegrationParameters
+outputs: []
+script: '-'
+tags: []
+timeout: '0'
+type: python
+subtype: python3
+dockerimage: demisto/python3:3.10.14.91134
+runas: DBotWeakRole
+fromversion: 6.10.0
+tests:
+- No tests (auto formatted)
