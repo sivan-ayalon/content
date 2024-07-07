@@ -47,7 +47,9 @@ def set_instance(instance: dict, parameters: dict) -> dict:
         dict: The server response from the configuration call.
     '''
     for key, value in parameters.items():
-        config_parameter: dict = next(param for param in instance['data'] if key in (param['name'], param['display']))
+        config_parameter: dict = next(
+            (param for param in instance['data'] if key in (param['name'], param['display'])), {}
+        )
         config_parameter.update({
             'hasvalue': True,
             'value': value
