@@ -46,14 +46,14 @@ def common_strings(list1: list[str], list2: list[dict]) -> list[dict]:
 
 
 def get_incidentfields(type_name: str, name_fields: list[str]) -> list:
-    all_incidentfields = demisto.executeCommand(
+    res = demisto.executeCommand(
         "core-api-get", {"uri": "/incidentfields"}
     )
-    list_incidentfields = all_incidentfields[0]["Contents"]["response"]
-
+    all_incidentfields = res[0]["Contents"]["response"]
+    
     singleSelect_field = []
-    for field in list_incidentfields:
-        if field.get("type", "") == type_name and field.get("id", "") in name_fields:
+    for field in all_incidentfields:
+        if field.get("type", "") == type_name and field.get("cliName", "") in name_fields:
             singleSelect_field.append(field)
 
     return singleSelect_field
@@ -74,14 +74,10 @@ def main():
 
         pattern = r"'fieldId':\s*'([^']+)'"
         name_of_fields_in_layout = re.findall(pattern, str(layout_file))
-        all_incidentfields = get_incidentfields(
-            "singleSelect", name_of_fields_in_layout
-        )
-
+        incidentfields_filtered = get_incidentfields("singleSelect", name_of_fields_in_layout)
         incidentfields_to_update_in_context = get_fieldname_and_default_val(
-            all_incidentfields
+            incidentfields_filtered
         )
-
         return_results(update_context(incidentfields_to_update_in_context, context))
     except Exception as ex:
         demisto.error(traceback.format_exc())  # print the traceback
