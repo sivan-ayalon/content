@@ -15,9 +15,16 @@ urllib3.disable_warnings()
 TOKEN_INPUT_IDENTIFIER = '__token'
 DAYS_BACK_FOR_FIRST_QUERY_OF_INCIDENTS = 3
 DATETIME_FORMAT_MILISECONDS = '%Y-%m-%dT%H:%M:%S.%f'
+<<<<<<< HEAD
 DEFAULT_LIMIT = "50"
 MAX_LENGTH_CONTEXT = 10000
 DEFAULT_FETCH_TYPE = ["Exabeam Incident"]
+=======
+DEFAULT_LIMIT = 50
+MAX_LENGTH_CONTEXT = 10000
+DEFAULT_FETCH_TYPE = ["Exabeam Incident"]
+MAX_LIMIT_FETCH_USERS = 200
+>>>>>>> 4b3babfac43ee3ad3fa23ce22b0842d2f5276405
 
 
 class Client(BaseClient):
@@ -1249,6 +1256,25 @@ def test_module(client: Client, args: dict[str, str], params: dict[str, str]):
         ok if successful
     """
     client.test_module_request()
+
+    is_fetch = argToBoolean(params.get("isFetch") or False)
+    if is_fetch:
+        fetch_type = params.get("fetch_type", DEFAULT_FETCH_TYPE)
+        if "Exabeam Notable User" in fetch_type:
+
+            fetch_interval = arg_to_number(params.get("notable_users_fetch_interval")) or 60
+            if fetch_interval % 60 != 0:
+                raise ValueError("The Notable Users Fetch Interval must be specified in whole hours")
+
+            max_fetch_users = arg_to_number(params.get("max_fetch_users")) or DEFAULT_LIMIT
+            if max_fetch_users <= 0 or max_fetch_users > MAX_LIMIT_FETCH_USERS:
+                raise ValueError("The Max Users Per Fetch must be between 1 and 200")
+
+            client.get_notable_users_request("h", "1", 1)
+
+        if "Exabeam Incident" in fetch_type:
+            client.get_incidents({})
+
     demisto.results('ok')
 
 
@@ -2197,11 +2223,16 @@ def fetch_exabeam_incidents(client: Client, args: dict[str, str], last_run: dict
 
 
 def fetch_notable_users(client: Client, args: dict[str, str], last_run_obj: dict) -> tuple[list, dict]:
+<<<<<<< HEAD
     current_time = datetime.now(pytz.utc)
+=======
+    current_time = datetime.now(timezone.utc)
+>>>>>>> 4b3babfac43ee3ad3fa23ce22b0842d2f5276405
     last_run_notable_users: str = last_run_obj.get("last_run_notable_users", "")
     demisto.debug(f"Last run notable users: {last_run_notable_users}, before fetch")
 
     if last_run_notable_users:
+<<<<<<< HEAD
         last_run_time = datetime.fromisoformat(last_run_notable_users).astimezone(pytz.utc)
         difference = current_time - last_run_time
         difference_minutes = difference.total_seconds() / 60
@@ -2213,11 +2244,31 @@ def fetch_notable_users(client: Client, args: dict[str, str], last_run_obj: dict
 
         else:
             time_period = "1 hours"
+=======
+        last_run_time = datetime.fromisoformat(last_run_notable_users).astimezone(timezone.utc)
+        difference = current_time - last_run_time
+        difference_minutes = difference.total_seconds() / 60
+        fetch_interval = arg_to_number(args.get("notable_users_fetch_interval")) or 60
+
+       # Ensure fetch_interval is at least 60 and rounded to the nearest multiple of 60
+        fetch_interval = max(60, round(fetch_interval / 60) * 60)
+
+        demisto.debug(f"Difference of {difference_minutes} minutes between the current time and the last run notable users")
+        if difference_minutes <= fetch_interval:  # Check if the time interval is past.
+            return [], last_run_obj
+
+        else:
+            time_period = f"{int(fetch_interval/60)} hours"
+>>>>>>> 4b3babfac43ee3ad3fa23ce22b0842d2f5276405
 
     else:  # In the first run
         time_period = args.get("notable_users_first_fetch", "3 months")
 
+<<<<<<< HEAD
     limit = args.get("max_fetch_users") or DEFAULT_LIMIT
+=======
+    limit = arg_to_number(args.get("max_fetch_users")) or DEFAULT_LIMIT
+>>>>>>> 4b3babfac43ee3ad3fa23ce22b0842d2f5276405
     args_notable_users = {"limit": limit, "time_period": time_period}
     demisto.debug(f"Before the request args notable users, limit: {limit}, time period: {time_period}")
     _, _, res = get_notable_users(client, args_notable_users)
@@ -2233,11 +2284,17 @@ def fetch_notable_users(client: Client, args: dict[str, str], last_run_obj: dict
     new_usernames = []
     for user in users:
         user_details = user.get("user", {})
+<<<<<<< HEAD
         username, risk_score = user_details.get("username", ""), user_details.get("riskScore", -1)
+=======
+        username = user_details.get("username", "")
+        risk_score = user_details.get("riskScore", -1)
+>>>>>>> 4b3babfac43ee3ad3fa23ce22b0842d2f5276405
         if risk_score >= minimum_risks and username not in existing_usernames:
             new_risky_users.append(user)
             new_usernames.append(username)
 
+<<<<<<< HEAD
     demisto.debug(f"After filtering, there are {len(new_risky_users)} new risky users, and {len(new_usernames)} new usernames")
 
     combined_usernames = existing_usernames + new_usernames
@@ -2246,6 +2303,21 @@ def fetch_notable_users(client: Client, args: dict[str, str], last_run_obj: dict
     demisto.debug(f"{excess_length} usernames deleted from the lest run to avoid exceeding the maximum")
     last_run_obj["usernames"] = usernames_to_lest_run
     demisto.debug(f"After the added lest run contain {len(usernames_to_lest_run)} usernames")
+=======
+    demisto.debug(f"After filtering, there are {len(new_risky_users)} new risky users")
+
+    combined_usernames = existing_usernames + new_usernames
+
+    # Calculate the excess length, which is the amount by which the combined list exceeds the maximum allowed length
+    excess_length = max(len(combined_usernames) - MAX_LENGTH_CONTEXT, 0)
+
+    # Create the new list of usernames, trimming the excess from the existing ones
+    usernames_to_last_run = existing_usernames[excess_length:] + new_usernames
+    demisto.debug(f"{excess_length} usernames deleted from the lest run to avoid exceeding the maximum")
+
+    last_run_obj["usernames"] = usernames_to_last_run
+    demisto.debug(f"After the added lest run contain {len(usernames_to_last_run)} usernames")
+>>>>>>> 4b3babfac43ee3ad3fa23ce22b0842d2f5276405
 
     incidents: list[dict] = []
     for user_data in new_risky_users:

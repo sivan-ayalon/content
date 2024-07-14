@@ -127,11 +127,13 @@ configuration:
   section: Collect
 - display: Max Users Per Fetch
   name: max_fetch_users
+  additionalinfo: Applies only when the Fetch Type is set to Exabeam Notable User.
   type: 0
   section: Collect
   defaultvalue: 50
 - display: Notable Users Fetch Interval
   name: notable_users_fetch_interval
+  additionalinfo: The interval, in whole hours, between consecutive fetch operations.
   defaultvalue: "60"
   type: 19
   section: Collect
@@ -1738,7 +1740,11 @@ script:
     - contextPath: Exabeam.incidents.fields.description
       description: The incident description.
       type: String
+<<<<<<< HEAD
   dockerimage: demisto/python3:3.10.14.99865
+=======
+  dockerimage: demisto/python3:3.11.9.101916
+>>>>>>> 4b3babfac43ee3ad3fa23ce22b0842d2f5276405
   isfetch: true
   runonce: false
   script: '-'
