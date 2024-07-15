@@ -16,6 +16,13 @@ CLIENT = cbe.Client(
     token=None,
     cb_org_key="123")
 
+CLIENT = cbe.Client(
+    base_url='https://server_url.com',
+    use_ssl=False,
+    use_proxy=False,
+    token=None,
+    cb_org_key="123")
+
 PROCESS_CASES = [
     (
         {'process_hash': '63d423ea882264dbb157a965c200306212fc5e1c6ddb8cbbb0f1d3b51ecd82e6',
@@ -273,8 +280,10 @@ def test_add_alert_notes_command(mocker):
 
     """
     mocker.patch.object(CLIENT, '_http_request', return_value=MOCK_UPDATE_ALERT_NOTES_RESPONSE)
+    mocker.patch.object(CLIENT, '_http_request', return_value=MOCK_UPDATE_ALERT_NOTES_RESPONSE)
 
     args = {'alert_id': '789012', 'notes': 'These are alert notes'}
+    result = add_alert_notes_command(CLIENT, args)
     result = add_alert_notes_command(CLIENT, args)
 
     assert result.outputs == {'AlertID': '789012', 'Notes': 'These are alert notes'}

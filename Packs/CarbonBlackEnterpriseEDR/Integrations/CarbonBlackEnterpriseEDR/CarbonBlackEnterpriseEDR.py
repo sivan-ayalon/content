@@ -1,4 +1,5 @@
 
+
 import demistomock as demisto  # noqa: F401
 from CommonServerPython import *  # noqa: F401
 
@@ -10,6 +11,7 @@ import urllib3
 
 # Disable insecure warnings
 urllib3.disable_warnings()
+LOG_INIT = "CBEEDR - "
 LOG_INIT = "CBEEDR - "
 
 
