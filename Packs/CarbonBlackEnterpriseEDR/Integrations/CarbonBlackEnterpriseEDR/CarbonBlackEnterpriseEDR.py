@@ -1299,7 +1299,6 @@ def fetch_incidents(client: Client, fetch_time: str, fetch_limit: str, last_run:
     last_fetched_alerts_ids = last_run.get('last_fetched_alerts_ids', '')
     if not last_fetched_alert_create_time:
         last_fetched_alert_create_time, _ = parse_date_range(fetch_time, date_format='%Y-%m-%dT%H:%M:%S.000Z')
-    latest_alert_create_date = last_fetched_alert_create_time
 
     incidents = []
 
@@ -1313,9 +1312,14 @@ def fetch_incidents(client: Client, fetch_time: str, fetch_limit: str, last_run:
         limit=fetch_limit,
     )
     
-    keyfunc = lambda alert: alert['backend_timestamp']
-    result = map_reduce(response['results'], keyfunc)
-    alerts_ids_to_save = [alert['id'] for alert in result['2024-07-11T14:23:50.547Z']]
+    # Some alerts have exactly the same backend_timestamp,
+    # therefor we dedup alerts that have the backend_timestamp of the last alert in the last run.
+    get_backend_timestamp_func = lambda alert: alert['backend_timestamp']
+    alert_ids_grouped_by_backend_timestamp = map_reduce(response['results'], get_backend_timestamp_func)
+    # backend_timestamp of last alert retrieved.
+    last_backend_timestamp = response['results'][-1]['backend_timestamp']
+    # alert ids that have that backend_timestamp (need to be deduped in the next run).
+    alerts_ids_to_save = [alert['id'] for alert in alert_ids_grouped_by_backend_timestamp[last_backend_timestamp]]
     
     alerts = response.get('results', [])
     demisto.debug(f'{LOG_INIT} got {len(alerts)} alerts from server')
@@ -1336,11 +1340,10 @@ def fetch_incidents(client: Client, fetch_time: str, fetch_limit: str, last_run:
         incidents.append(incident)
         parsed_date = dateparser.parse(alert_create_date)
         assert parsed_date is not None, f'failed parsing {alert_create_date}'
-        latest_alert_create_date = datetime.strftime(parsed_date + timedelta(seconds=1),
-                                                     '%Y-%m-%dT%H:%M:%S.000Z')
+        
         
     demisto.debug(f'{LOG_INIT} sending {len(incidents)} incidents')
-    res = {'last_fetched_alert_create_time': latest_alert_create_date, 'last_fetched_alerts_ids': alerts_ids_to_save}
+    res = {'last_fetched_alert_create_time': alert_create_date, 'last_fetched_alerts_ids': alerts_ids_to_save}
     return incidents, res
 
 
