@@ -14,10 +14,10 @@ urllib3.disable_warnings()
 TOKEN_INPUT_IDENTIFIER = '__token'
 DAYS_BACK_FOR_FIRST_QUERY_OF_INCIDENTS = 3
 DATETIME_FORMAT_MILISECONDS = '%Y-%m-%dT%H:%M:%S.%f'
-DEFAULT_LIMIT = 50
+DEFAULT_LIMIT = 1000
 MAX_LENGTH_CONTEXT = 10000
 DEFAULT_FETCH_TYPE = ["Exabeam Incident"]
-MAX_LIMIT_FETCH_USERS = 200
+MAX_LIMIT_FETCH_USERS = 10000
 
 
 class Client(BaseClient):
@@ -1261,7 +1261,7 @@ def test_module(client: Client, args: dict[str, str], params: dict[str, str]):
 
             max_fetch_users = arg_to_number(params.get("max_fetch_users")) or DEFAULT_LIMIT
             if max_fetch_users <= 0 or max_fetch_users > MAX_LIMIT_FETCH_USERS:
-                raise ValueError("The Max Users Per Fetch must be between 1 and 200")
+                raise ValueError(f"The Max Users Per Fetch must be between 1 and {MAX_LIMIT_FETCH_USERS}")
 
             client.get_notable_users_request("h", "1", 1)
 
