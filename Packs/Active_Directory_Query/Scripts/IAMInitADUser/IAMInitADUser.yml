@@ -82,8 +82,6 @@ tags:
 type: python
 dockerimage: demisto/py3-tools:1.0.0.95440
 runas: DBotWeakRole
-tests:
-- Active Directory Test
 fromversion: 5.0.0
 contentitemexportablefields:
   contentitemfields:

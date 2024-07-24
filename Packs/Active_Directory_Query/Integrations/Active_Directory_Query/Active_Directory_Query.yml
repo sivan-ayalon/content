@@ -805,5 +805,3 @@ script:
   isremotesyncout: true
   runonce: false
 fromversion: 5.0.0
-tests:
-- Active Directory Test
