@@ -568,4 +568,15 @@ def test_check_getLastRun(last_run, expected_last_run):
     assert updated_last_run == expected_last_run
     
     
-
+def test_search_alerts_request__empty_arguments(mocker):
+    """
+        Given:
+            - Empty arguments.
+        When:
+            - Running search_alerts_request func.
+        Then:
+            - The http request is called with no 'time_range' key in the body
+    """
+    http_request = mocker.patch.object(CLIENT, '_http_request', return_value=[])
+    CLIENT.search_alerts_request()
+    assert 'time_range' not in http_request.call_args.kwargs['json_data']
