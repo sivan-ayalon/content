@@ -389,6 +389,7 @@ class Client(BaseClient):
             Dict[str, Any]: API respnse from BmcITSM.
         """
         params = remove_empty_elements({"q": query})
+        demisto.debug(f"panw test params of list request: {params}")
         response = self._http_request("GET", f"arsys/v1/entry/{form}", params=params)
         return response
 
@@ -3364,13 +3365,13 @@ def fetch_relevant_tickets_by_ticket_type(
 
     Args:
         client (Client): BMC ITSM API Client.
-        ticket_types (List[str]): List of the tickets types to fetch.
+        ticket_type (str): ticket types to fetch.
         max_fetch (int): Maximum number of tickets to fetch.
         last_run (Dict[str,Any]): Contains last ticket create time per ticket type.
         t_epoch_to (int): Time epoch in seconds to fetch until.
         status_filter (List[str]): List of the ticket statuses to fetch.
         impact_filter (List[str]): List of the ticket impacts to fetch.
-        urgency_filter (List[str]): List of the ticket uregencies to fetch.
+        urgency_filter (List[str]): List of the ticket urgencies to fetch.
         custom_query (str): User custom query.
     Returns:
         List[dict]: Fetched tickets of the specified type.
@@ -3522,7 +3523,7 @@ def gen_fetch_incidents_query(
         str: query to fetch a certain ticket type.
     """
     create_time_prop = "Create Date" if ticket_type == "task" else "Submit Date"
-    time_filter = f"'{create_time_prop}' <= \"{t_epoch_to}\" AND '{create_time_prop}' >\"{t_epoch_from}\""
+    time_filter = f"'{create_time_prop}' <= \"{t_epoch_to}\" AND '{create_time_prop}' > \"{t_epoch_from or 0}\""
 
     status_statement = gen_single_filters_statement(TICKET_TYPE_TO_STATUS_KEY[ticket_type],
                                                     status_filter, "=", " OR ")
