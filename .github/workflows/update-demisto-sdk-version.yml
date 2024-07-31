@@ -63,7 +63,7 @@ jobs:
       run: |
         git commit -m "poetry files" -a
         git push origin ${{ inputs.release_version }}
-        echo -e "${{ inputs.release_changes }}" >> RELEASE_CHANGES
+        export RELEASE_CHANGES=$( echo -e "${{ inputs.release_changes }}" )
         if ${{ inputs.is_draft == true }}; then
           echo "creating draft release pull request"
           gh pr create -B master -H ${{ inputs.release_version }} --title "demisto-sdk-release ${{ inputs.release_version }}" --body $RELEASE_CHANGES --reviewer ${{ inputs.reviewer }} -l "docs-approved" --draft
