@@ -525,41 +525,49 @@ def get_whois_verdict(domains: list[str]) -> list:
 
 def get_predictions_for_urls(
     model: Model, urls: list[str], domains: list[str], force_model: bool, debug: bool, rasterize_timeout: int, protocol: str
-) -> list[CommandResults]:
+) -> Union[CommandResults, str]:
+
+    if not urls:
+        return 'No URLs found. Skipping prediction.'
 
     rasterize_outputs = rasterize_urls(urls, rasterize_timeout)
 
     if not rasterize_outputs:
-        return []
+        return 'All URLs failed to be rasterized. Skipping prediction.'
 
     whois_results = get_whois_verdict(domains)
 
-    results: list[CommandResults] = []
+    results: list[dict] = []
     for url, res_whois, output_rasterize in zip(urls, whois_results, rasterize_outputs):
 
         # Check is domain in white list -  If yes we don't run the model
-        if in_white_list(model, url):
-            is_white_listed = True
-            if not force_model:
-                results.append(create_dict_context(
-                    url, BENIGN_VERDICT_WHITELIST,
-                    {}, SCORE_BENIGN, is_white_listed, {}
-                ))
-                continue
+        
+        if (is_white_listed := in_white_list(model, url)) and not force_model:
+            results.append(create_dict_context(url, BENIGN_VERDICT_WHITELIST, {}, SCORE_BENIGN, is_white_listed, {}))
         else:
-            is_white_listed = False
+            x_pred = create_x_pred(
+                output_rasterize,
+                prepend_protocol(url, protocol)
+            )
 
-        x_pred = create_x_pred(
-            output_rasterize,
-            prepend_protocol(url, protocol)
-        )
+            pred_json = model.predict(x_pred)
+            pred_json[DOMAIN_AGE_KEY] = extract_created_date(res_whois)
 
-        pred_json = model.predict(x_pred)
-        pred_json[DOMAIN_AGE_KEY] = extract_created_date(res_whois)
+            score, verdict = get_verdict(pred_json, is_white_listed)
+            results.append(create_dict_context(url, verdict, pred_json, score, is_white_listed, output_rasterize))
 
-        score, verdict = get_verdict(pred_json, is_white_listed)
-        results.append(create_dict_context(url, verdict, pred_json, score, is_white_listed, output_rasterize))
-    return results
+    if results:
+        return_general_summary(results)
+        return_detailed_summary(results)
+
+    return CommandResults(
+        outputs=summary_context,
+        outputs_prefix='MLPredictPhishingURL',
+        outputs_key_field='url',
+        readable_output=tableToMarkdown(
+            "Phishing URL predictions", df_summary_json, headers=['URL', KEY_FINAL_VERDICT]
+        ),
+    )
 
 
 def return_general_summary(results: list[dict], tag: str = "Summary") -> list[dict]:
@@ -609,16 +617,8 @@ def return_general_summary(results: list[dict], tag: str = "Summary") -> list[di
     }
     if tag is not None:
         return_entry["Tags"] = [f'DBOT_URL_PHISHING_{tag}']
-    return_entry = CommandResults(
-        outputs=summary_context,
-        outputs_prefix='MLPredictPhishingURL',
-        outputs_key_field='url',
-        readable_output=tableToMarkdown(
-            "Phishing URL predictions", df_summary_json, headers=['URL', KEY_FINAL_VERDICT]
-        ),
-    )
     return_results(return_entry)
-    
+
     return df_summary_json
 
 
@@ -768,28 +768,23 @@ def prepare_urls(urls: Union[list[str], str],  model: Model) -> tuple[list[str],
         for url in urls
         if (domain := extract_domainv2(url)) not in model.top_domains
     }
-    urls = list(domain_to_urls.values())
-    urls = [res['Contents'] for res in demisto.executeCommand("UnEscapeURLs", {"input": urls})]  # type: ignore
+    unescaped_urls = demisto.executeCommand("UnEscapeURLs", {"input": list(domain_to_urls.values())})
+    urls = [res['Contents'] for res in unescaped_urls]  # type: ignore
     return urls, list(domain_to_urls)
 
 
 
 def get_predictions_for_phishing_urls(
-    urls=[], reset_model='TODO: find default', force_model=False, rasterize_timeout=TIMEOUT_RASTERIZE
+    urls=[], reset_model='TODO: find default', force_model=False, rasterize_timeout=TIMEOUT_RASTERIZE, default_request_protocol='HTTP'
 ) -> CommandResults:
-        protocol = demisto.args().get('defaultRequestProtocol', 'HTTP').lower()
 
         model = load_model()
+
         urls, domains = prepare_urls(urls, model)
 
-        if urls:
-            # Run the model and get predictions
-            results = get_predictions_for_urls(model, urls, domains, force_model, rasterize_timeout, protocol)
-            if results:
-                return_general_summary(results)
-                return_detailed_summary(results)
-            else:
-                return_results('All URLs failed to be rasterized. Skipping prediction.')
+        results = get_predictions_for_urls(model, urls, domains, force_model, rasterize_timeout, default_request_protocol)
+
+        return_results(results)
 
 
 def main():

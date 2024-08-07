@@ -55,11 +55,19 @@ PALETTE_COLOR = ['0048BA', '#B0BF1A	', '#7CB9E8	', '#B284BE	', '#E52B50', '#FFBF
                  '#D0FF14']
 
 
+def func_logger(func):
+    def new_func(*args, **kwargs):
+        demisto.debug(f'Function called: {func.__name__}({args=}, {kwargs=})')
+        res = func(*args, **kwargs)
+        demisto.debug(f'Function result: {func.__name__}, {res=})')
+        return res
+    return new_func
+
+
 class Clustering:
     """
     Class to build a clustering model.
     """
-
     def __init__(self, params, model_name='hdbscan'):
         """
         Instantiate class object for clustering
