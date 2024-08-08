@@ -13,6 +13,7 @@ from collections.abc import Generator, Iterable
 from pathlib import Path
 from demisto_sdk.commands.common.tools import get_pack_metadata
 import git
+import tabulate
 
 
 DOC_REVIEWER_KEY = "DOC_REVIEWER"
@@ -25,6 +26,10 @@ GITHUB_HIDDEN_DIR = ".github"
 CONTENT_ROLES_BLOB_MASTER_URL = f"https://raw.githubusercontent.com/demisto/content/master/{GITHUB_HIDDEN_DIR}/{CONTENT_ROLES_FILENAME}"
 
 LOG_FORMAT = "%(asctime)s %(levelname)s %(message)s"
+
+GH_TOKEN_ENV_VAR = "GITHUB_TOKEN"
+GH_JOB_SUMMARY_ENV_VAR = "GITHUB_STEP_SUMMARY"
+GH_REPO_ENV_VAR = "GITHUB_REPOSITORY"
 
 # override print so we have a timestamp with each print
 org_print = print
@@ -103,6 +108,23 @@ def get_env_var(env_var_name: str, default_val: str | None = None) -> str:
     return env_var_val
 
 
+def get_token():
+    """
+    Helper method to retrieve the GitHub token
+    from the environmental variables.
+
+    Returns:
+    - `token` (``str``): The GitHub token.
+
+    Raises:
+    `OSError` if the `GITHUB_TOKEN` env var is not set.
+    """
+    token = os.getenv(GH_TOKEN_ENV_VAR)
+    if not token:
+        raise OSError(f"Error: The '{GH_TOKEN_ENV_VAR}' environment variable is not set.")
+    return token
+
+
 class Checkout:  # pragma: no cover
     """Checks out a given branch.
     When the context manager exits, the context manager checks out the
@@ -125,16 +147,16 @@ class Checkout:  # pragma: no cover
             url = f"https://github.com/{fork_owner}/{repo_name}"
             try:
                 self.repo.create_remote(name=forked_remote_name, url=url)
-                print(f'Successfully created remote {forked_remote_name} for repo {url}')  # noqa: T201
+                logger.info(f'Successfully created remote {forked_remote_name} for repo {url}')  # noqa: T201
             except Exception as error:
                 if f'{forked_remote_name} already exists' not in str(error):
-                    print(f'could not create remote from {url}, {error=}')  # noqa: T201
+                    logger.error(f'could not create remote from {url}, {error=}')  # noqa: T201
                     # handle the case where the name of the forked repo is not content
                     if github_event_path := os.getenv("GITHUB_EVENT_PATH"):
                         try:
                             payload = json.loads(github_event_path)
                         except ValueError:
-                            print('failed to load GITHUB_EVENT_PATH')  # noqa: T201
+                            logger.error('failed to load GITHUB_EVENT_PATH')  # noqa: T201
                             raise ValueError(f'cannot checkout to the forked branch {branch_to_checkout} of the '
                                              f'owner {fork_owner}')
                         # forked repo name includes fork_owner + repo name, for example foo/content.
@@ -158,13 +180,13 @@ class Checkout:  # pragma: no cover
     def __enter__(self):
         """Checks out the given branch"""
         self.repo.git.checkout(self.branch_to_checkout)
-        print(f'Checked out to branch {self.branch_to_checkout}')  # noqa: T201
+        logger.info(f'Checked out to branch {self.branch_to_checkout}')  # noqa: T201
         return self
 
     def __exit__(self, *args):
         """Checks out the previous branch"""
         self.repo.git.checkout(self._original_branch)
-        print(f"Checked out to original branch {self._original_branch}")  # noqa: T201
+        logger.info(f"Checked out to original branch {self._original_branch}")  # noqa: T201
 
 
 class ChangeCWD:
@@ -275,10 +297,10 @@ def get_content_roles_from_blob() -> dict[str, Any] | None:
     try:
         response = requests.get(CONTENT_ROLES_BLOB_MASTER_URL)
         response.raise_for_status()  # Raise an error for bad status codes
-        print(f"Successfully retrieved {CONTENT_ROLES_FILENAME} from blob")
+        logger.info(f"Successfully retrieved {CONTENT_ROLES_FILENAME} from blob")
         roles = response.json()
     except (requests.RequestException, requests.HTTPError, json.JSONDecodeError, TypeError) as e:
-        print(f"{e.__class__.__name__} getting {CONTENT_ROLES_FILENAME} from blob: {e}.")
+        logger.error(f"{e.__class__.__name__} getting {CONTENT_ROLES_FILENAME} from blob: {e}.")
     finally:
         return roles
 
@@ -297,11 +319,11 @@ def get_content_roles(path: Path | None = None) -> dict[str, Any] | None:
     - `dict[str, Any]` representing the content roles.
     """
 
-    print(f"Attempting to retrieve '{CONTENT_ROLES_FILENAME}' from blob {CONTENT_ROLES_BLOB_MASTER_URL}...")
+    logger.info(f"Attempting to retrieve '{CONTENT_ROLES_FILENAME}' from blob {CONTENT_ROLES_BLOB_MASTER_URL}...")
     roles = get_content_roles_from_blob()
 
     if not roles:
-        print(f"Unable to retrieve '{CONTENT_ROLES_FILENAME}' from blob. Attempting to retrieve from the filesystem...")
+        logger.warning(f"Unable to retrieve '{CONTENT_ROLES_FILENAME}' from blob. Attempting to retrieve from the filesystem...")
         repo_root_path = get_repo_path(str(path))
         content_roles_path = repo_root_path / GITHUB_HIDDEN_DIR / CONTENT_ROLES_FILENAME
         roles = load_json(content_roles_path)
@@ -322,16 +344,20 @@ def get_repo_path(path: str = ".") -> Path:
     it's bare, we exit.
     """
 
+    root_path = None
+
     try:
         repo = git.Repo(path, search_parent_directories=True)
         git_root = repo.working_tree_dir
         if git_root:
-            return Path(git_root)
+            root_path = Path(git_root)
         else:
             raise ValueError
     except (git.exc.InvalidGitRepositoryError, ValueError):
-        print("Unable to get repo root path. Terminating...")
+        logger.error("Unable to get repo root path. Terminating...")
         sys.exit(1)
+
+    return root_path
 
 
 def get_metadata(pack_dirs: set[str]) -> list[dict]:
@@ -348,10 +374,10 @@ def get_metadata(pack_dirs: set[str]) -> list[dict]:
 
     for pack_dir in pack_dirs:
         if pack_metadata := get_pack_metadata(pack_dir):
-            print(f"pack metadata was retrieved for pack {pack_dir}")  # noqa: T201
+            logger.info(f"pack metadata was retrieved for pack {pack_dir}")  # noqa: T201
             pack_metadata_list.append(pack_metadata)
         else:
-            print(f'Could not find pack support level for pack {pack_dir}')  # noqa: T201
+            logger.warning(f'Could not find pack support level for pack {pack_dir}')  # noqa: T201
 
     return pack_metadata_list
 
@@ -385,3 +411,70 @@ def get_logger(file_name: str) -> Logger:
     logger.addHandler(stream_handler)
 
     return logger
+
+
+logger = get_logger(f"{Path(__file__).stem}")
+
+
+def write_deleted_summary_to_file(
+    header: str,
+    table_headers: list[str],
+    table_rows: list[list[Any]]
+) -> None:
+    """
+    Helper function to create a Markdown summary file for deleted branches
+    if the `GITHUB_STEP_SUMMARY` is set. See
+    https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary
+
+    Arguments:
+    - `header` (``str``): The summary header.
+    - `table_headers` (``list[str``]): The table summary header columns.
+    - `table_rows` (``list[list]``): The table rows.
+    """
+
+    if os.getenv(GH_JOB_SUMMARY_ENV_VAR):
+        fp = Path(str(os.getenv(GH_JOB_SUMMARY_ENV_VAR)))
+
+        if not fp.is_file():
+            logger.warning(f"The env var {GH_JOB_SUMMARY_ENV_VAR} is not set to a file. Not writing summary...")
+            return
+
+        table_body = tabulate.tabulate(
+            tabular_data=table_rows,
+            headers=table_headers,
+            tablefmt='github'
+        )
+        markdown_content = f"{header}\n\n{table_body}\n"
+
+        logger.debug(f"Writing deleted jobs summary to Markdown to file '{fp}'...")
+        logger.debug(markdown_content)
+        fp.write_text(markdown_content)
+        logger.debug("Finished writing jobs summary to Markdown to file")
+    else:
+        logger.info(
+            f"Environmental variable '{GH_JOB_SUMMARY_ENV_VAR}' not set. Skipping writing job summary for deleted rules...")
+
+
+def get_repo_owner_and_name() -> tuple[str, str]:
+    """
+    Extracts the repository owner and name from a given repository string.
+
+    Returns:
+        A `Tuple[str, str]` containing the repository owner and name.
+
+    Raises:
+        `ValueError`: If the input string is not in the expected 'owner/repository' format.
+    """
+
+    repo = os.getenv(GH_REPO_ENV_VAR)
+
+    if not repo:
+        raise OSError(f"Environmental variable '{GH_REPO_ENV_VAR}' not set.")
+
+    parts = repo.split('/')
+
+    if len(parts) != 2:
+        raise ValueError("Input string must be in the format 'owner/repository'.")
+
+    owner, name = parts
+    return owner, name

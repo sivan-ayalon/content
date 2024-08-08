@@ -6,13 +6,16 @@ branch protection rules.
 """
 
 from dataclasses import dataclass
-import os
 from pathlib import Path
 import sys
 from typing import Any
 
-import tabulate
-from utils import get_logger
+from utils import (
+    get_logger,
+    write_deleted_summary_to_file,
+    get_token,
+    get_repo_owner_and_name
+)
 
 from github import (
     Github,
@@ -22,16 +25,12 @@ from github import (
 import github
 import github.Requester
 
-
-GH_TOKEN_ENV_VAR = "GITHUB_TOKEN"
-
-# https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
-# e.g. 'demisto/content'
-GH_REPO_ENV_VAR = "GITHUB_REPOSITORY"
-GH_JOB_SUMMARY_ENV_VAR = "GITHUB_STEP_SUMMARY"
 PROTECTED_RULES = ["contrib/**/*", "master"]
 
 logger = get_logger(f"{Path(__file__).stem}")
+
+SUMMARY_HEADER = "## Deleted Branch Protection Rules"
+SUMMARY_TABLE_HEADERS = ["ID", "Pattern", "Matching Refs", "Deleted", "Error"]
 
 
 @dataclass
@@ -66,31 +65,6 @@ DELETE_BRANCH_PROTECTION_RULE_QUERY_TEMPLATE = """mutation deleteBranchProtectio
 
 
 # Helper Functions
-
-def get_repo_owner_and_name() -> tuple[str, str]:
-    """
-    Extracts the repository owner and name from a given repository string.
-
-    Returns:
-        A `Tuple[str, str]` containing the repository owner and name.
-
-    Raises:
-        `ValueError`: If the input string is not in the expected 'owner/repository' format.
-    """
-
-    repo = os.getenv(GH_REPO_ENV_VAR)
-
-    if not repo:
-        raise OSError(f"Environmental variable '{GH_REPO_ENV_VAR}' not set.")
-
-    parts = repo.split('/')
-
-    if len(parts) != 2:
-        raise ValueError("Input string must be in the format 'owner/repository'.")
-
-    owner, name = parts
-    return owner, name
-
 
 def convert_response_to_rules(response: dict[str, Any]) -> list[BranchProtectionRule]:
     """
@@ -143,65 +117,6 @@ def shouldnt_delete_rule(rule: BranchProtectionRule) -> str | None:
         return f"Rule not deleted because it's associated to {rule.matching_refs} existing branches/refs"
     else:
         return None
-
-
-def write_deleted_summary_to_file(processed: list[BranchProtectionRule]) -> None:
-    """
-    Helper function to create a Markdown summary file for deleted branches
-    if the `GITHUB_STEP_SUMMARY` is set. See
-    https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary
-
-    Arguments:
-    - `deleted` (``list[BranchProtectionRule]``): A list of deleted `BranchProtectionRule`s.
-    """
-
-    if os.getenv(GH_JOB_SUMMARY_ENV_VAR):
-        fp = Path(str(os.getenv(GH_JOB_SUMMARY_ENV_VAR)))
-
-        if not fp.is_file():
-            logger.warning(f"The env var {GH_JOB_SUMMARY_ENV_VAR} is not set to a file. Not writing summary...")
-            return
-
-        header = "## Deleted Branch Protection Rules"
-
-        if not processed or all(not rule.deleted for rule in processed):
-            body = "### No branch protection rules were deleted"
-            markdown_content = f"{header}\n\n{body}\n"
-        else:
-            headers = ["ID", "Pattern", "Matching Refs", "Deleted", "Error"]
-            table_rows = [[rule.id, rule.pattern, rule.matching_refs, rule.deleted, rule.error] for rule in processed]
-
-            table_body = tabulate.tabulate(
-                tabular_data=table_rows,
-                headers=headers,
-                tablefmt='github'
-            )
-            markdown_content = f"{header}\n\n{table_body}\n"
-
-        logger.debug(f"Writing deleted jobs summary to Markdown to file '{fp}'...")
-        logger.debug(markdown_content)
-        fp.write_text(markdown_content)
-        logger.debug("Finished writing jobs summary to Markdown to file")
-    else:
-        logger.info(
-            f"Environmental variable '{GH_JOB_SUMMARY_ENV_VAR}' not set. Skipping writing job summary for deleted rules...")
-
-
-def get_token():
-    """
-    Helper method to retrieve the GitHub token
-    from the environmental variables.
-
-    Returns:
-    - `token` (``str``): The GitHub token.
-
-    Raises:
-    `OSError` if the `GITHUB_TOKEN` env var is not set.
-    """
-    token = os.getenv(GH_TOKEN_ENV_VAR)
-    if not token:
-        raise OSError(f"Error: The '{GH_TOKEN_ENV_VAR}' environment variable is not set.")
-    return token
 
 
 def send_request(gh_requester: github.Requester.Requester, query: str, variables: dict[str, str]) -> dict[str, str]:
@@ -359,7 +274,11 @@ def main():
         rules_with_errors = [rule for rule in processed_rules if rule.error]
         logger.info(f"Processed {len(processed_rules)} rules, {len(rules_with_errors)} with errors.")
 
-        write_deleted_summary_to_file(processed_rules)
+        write_deleted_summary_to_file(
+            header=SUMMARY_HEADER,
+            table_headers=SUMMARY_TABLE_HEADERS,
+            table_rows=[[rule.id, rule.pattern, rule.matching_refs, rule.deleted, rule.error] for rule in processed_rules]
+        )
 
         if rules_with_errors:
             raise RuntimeError(f"The following rules returned errors:\n{rules_with_errors}")

@@ -7,17 +7,17 @@ from typing import Any
 import github
 import pytest
 from pytest_mock import MockerFixture
-from requests_mock import Mocker as RequestsMocker
 from purge_branch_protection_rules import (
+    BranchProtectionRule,
+    convert_response_to_rules,
+    shouldnt_delete_rule,
+    main
+)
+from utils import (
     GH_REPO_ENV_VAR,
     GH_TOKEN_ENV_VAR,
     GH_JOB_SUMMARY_ENV_VAR,
-    BranchProtectionRule,
     get_repo_owner_and_name,
-    convert_response_to_rules,
-    write_deleted_summary_to_file,
-    shouldnt_delete_rule,
-    main
 )
 
 test_data_path = Path(__file__).parent.absolute() / "github_workflow_scripts_tests" / "test_files"
@@ -148,132 +148,6 @@ class TestPurgeBranchProtectionRules():
         with pytest.raises(AttributeError):
             convert_response_to_rules({"data": "unexpected"})
 
-    def test_md_summary_output(
-            self,
-            mocker: MockerFixture,
-            tmp_path: Path
-    ):
-        """
-        Test the output of the summary file generated.
-
-        Given:
-        - A temporary directory.
-
-        When:
-        - The `GITHUB_STEP_SUMMARY` env var is set to the temporary directory.
-        - A rule is deleted.
-
-        Then:
-        - The summary file exists in the temporary directory.
-        - The summary includes the rule that was deleted.
-        """
-
-        summary_file_path = tmp_path / "summary.md"
-        summary_file_path.touch()
-        mocker.patch.dict(os.environ, {GH_JOB_SUMMARY_ENV_VAR: str(summary_file_path)})
-
-        deleted: list[BranchProtectionRule] = []
-        for i in range(10):
-            deleted.append(
-                BranchProtectionRule(
-                    id=str(i),
-                    pattern=f"{i}/*",
-                    matching_refs=0,
-                    deleted=True
-                )
-            )
-
-        write_deleted_summary_to_file(deleted)
-
-        assert summary_file_path.exists()
-        actual_summary_lines = summary_file_path.read_text().splitlines()
-        assert len(actual_summary_lines) == 14
-        assert "1/*" in actual_summary_lines[5]
-
-    def test_md_summary_output_no_deleted_rules(
-            self,
-            mocker: MockerFixture,
-            tmp_path: Path
-    ):
-        """
-        Test the output of the summary file generated
-        when there were no deleted rules.
-
-        Given:
-        - A temporary directory.
-
-        When:
-        - The `GITHUB_STEP_SUMMARY` env var is set to the temporary directory.
-        - No rules have been deleted.
-
-        Then:
-        - The summary file exists in the temporary directory.
-        - The summary includes a message indicating rules have
-        not been deleted.
-        """
-
-        summary_file_path = tmp_path / "summary.md"
-        summary_file_path.touch()
-        mocker.patch.dict(os.environ, {GH_JOB_SUMMARY_ENV_VAR: str(summary_file_path)})
-
-        deleted: list[BranchProtectionRule] = []
-
-        write_deleted_summary_to_file(deleted)
-
-        assert summary_file_path.exists()
-        actual_summary_lines = summary_file_path.read_text().splitlines()
-        assert len(actual_summary_lines) == 3
-        assert "No branch protection rules were deleted" in actual_summary_lines[2]
-
-    def test_md_summary_output_no_deleted_rules_2(
-            self,
-            mocker: MockerFixture,
-            tmp_path: Path
-    ):
-        """
-        Test the output of the summary file generated
-        when there was a list of processed rules
-        but none of them were deleted.
-
-        Given:
-        - A temporary directory.
-
-        When:
-        - The `GITHUB_STEP_SUMMARY` env var is set to the temporary directory.
-        - No rules have been deleted.
-
-        Then:
-        - The summary file exists in the temporary directory.
-        - The summary includes a message indicating rules have
-        not been deleted.
-        """
-
-        summary_file_path = tmp_path / "summary.md"
-        summary_file_path.touch()
-        mocker.patch.dict(os.environ, {GH_JOB_SUMMARY_ENV_VAR: str(summary_file_path)})
-
-        processed: list[BranchProtectionRule] = [
-            BranchProtectionRule(
-                id="1",
-                pattern="abcd",
-                matching_refs=0,
-                error=github.GithubException(status=400)
-            ),
-            BranchProtectionRule(
-                id="2",
-                pattern="abce",
-                matching_refs=0,
-                error=github.GithubException(status=400)
-            )
-        ]
-
-        write_deleted_summary_to_file(processed)
-
-        assert summary_file_path.exists()
-        actual_summary_lines = summary_file_path.read_text().splitlines()
-        assert len(actual_summary_lines) == 3
-        assert "No branch protection rules were deleted" in actual_summary_lines[2]
-
     def test_should_delete_rule(self):
         """
         Given:
@@ -329,12 +203,11 @@ class TestPurgeBranchProtectionRules():
 
     def test_main(
         self,
-        requests_mock: RequestsMocker,
+        mocker: MockerFixture,
         caplog: pytest.LogCaptureFixture,
     ):
         """
         Test the happy path of the `main` function.
-
 
         Given:
         - Mock response for get branch protection rules request.
@@ -349,38 +222,32 @@ class TestPurgeBranchProtectionRules():
         - The log includes information about what happened to each rule.
         """
 
-        requests_mock.post(
-            url="https://api.github.com:443/graphql",
-            response_list=[
-                {
-                    'json': self.protection_rules_response_data,
-                    'status_code': 200
-                },
-                {
-                    'json': self.delete_protection_rule_data,
-                    'status_code': 200
-                }
-            ]
+        mocker.patch(
+            "purge_branch_protection_rules.get_branch_protection_rules",
+            return_value=convert_response_to_rules(self.protection_rules_response_data)
         )
+
+        mock_send_request = mocker.patch('purge_branch_protection_rules.send_request')
+        mock_send_request.side_effect = [
+            self.delete_protection_rule_data,
+            self.delete_protection_rule_data
+        ]
+
         with caplog.at_level(level=logging.DEBUG):  # Set the logging level you are interested in
             main()
 
         # Assert specific log messages in the captured logs
         actual_log_output = caplog.text.splitlines()
-        assert "4 rules returned." in actual_log_output[13]
-        assert "not deleted because it's in the list of protected rules" in actual_log_output[
-            15]
-        assert "was deleted successfully." in actual_log_output[
-            25]
-        assert "was deleted successfully." in actual_log_output[
-            35]
-        assert "not deleted because it's associated to 3 existing branches/refs" in actual_log_output[
-            36]
+        assert "4 rules returned." in actual_log_output[3]
+        assert "(1/4) Skipping deletion of " in actual_log_output[5]
+        assert "(2/4) Deleting " in actual_log_output[6]
+        assert "(3/4) Deleting " in actual_log_output[8]
+        assert "(4/4) Skipping deletion of " in actual_log_output[10]
+        assert "Processed 4 rules, 0 with errors." in actual_log_output[11]
 
-    def test_main_rate_limit(self, requests_mock: RequestsMocker):
+    def test_main_rate_limit(self, mocker: MockerFixture):
         """
         Test `main` function when a request is rate-limited.
-
 
         Given:
         - Mock response for get branch protection rules request.
@@ -393,13 +260,11 @@ class TestPurgeBranchProtectionRules():
         - The program exits 1.
         """
 
-        requests_mock.post(
-            url="https://api.github.com:443/graphql",
-            exc=github.RateLimitExceededException(
-                status=403,
-                data={"msg": "rate limit exceeded, resets in 1h"},
-                headers={"x-rate-limit": "5000"}
-            )
+        mock_send_request = mocker.patch('purge_branch_protection_rules.send_request')
+        mock_send_request.side_effect = github.RateLimitExceededException(
+            status=403,
+            data={"msg": "rate limit exceeded, resets in 1h"},
+            headers={"x-rate-limit": "5000"}
         )
 
         with pytest.raises(SystemExit) as exc:
@@ -407,10 +272,9 @@ class TestPurgeBranchProtectionRules():
 
         assert exc.value.code == 1
 
-    def test_main_rate_limit_2nd(self, requests_mock: RequestsMocker):
+    def test_main_rate_limit_2nd(self, mocker: MockerFixture):
         """
         Test `main` function when a request is rate-limited.
-
 
         Given:
         - Mock response for get branch protection rules request.
@@ -426,29 +290,22 @@ class TestPurgeBranchProtectionRules():
         - The program exits 1.
         """
 
-        requests_mock.post(
-            url="https://api.github.com:443/graphql",
-            response_list=[
-                {
-                    'json': self.protection_rules_response_data,
-                    'status_code': 200
-                },
-                {
-                    'exc': github.RateLimitExceededException(
-                        status=403,
-                        data={"msg": "rate limit exceeded, resets in 1h"},
-                        headers={"x-rate-limit": "5000"}
-                    )
-                }
-            ]
-        )
+        mock_send_request = mocker.patch('purge_branch_protection_rules.send_request')
+        mock_send_request.side_effect = [
+            self.protection_rules_response_data,
+            github.RateLimitExceededException(
+                status=403,
+                data={"msg": "rate limit exceeded, resets in 1h"},
+                headers={"x-rate-limit": "5000"}
+            )
+        ]
 
         with pytest.raises(SystemExit) as exc:
             main()
 
         assert exc.value.code == 1
 
-    def test_main_rate_limit_skipping(self, requests_mock: RequestsMocker, caplog: pytest.LogCaptureFixture):
+    def test_main_rate_limit_skipping(self, mocker: MockerFixture, caplog: pytest.LogCaptureFixture):
         """
         Test `main` function when a request is rate-limited.
 
@@ -471,34 +328,18 @@ class TestPurgeBranchProtectionRules():
         - The program exits 1.
         """
 
-        requests_mock.post(
-            url="https://api.github.com:443/graphql",
-            response_list=[
-                {
-                    'json': self.protection_rules_response_data,
-                    'status_code': 200
-                },
-                {
-                    'exc': github.UnknownObjectException(
-                        status=403,
-                        data={"msg": "unknown error"},
-                        headers={"x-rate-limit": "5000"}
-                    )
-                },
-                {
-                    'json': self.delete_protection_rule_data,
-                    'status_code': 200
-                },
-                {
-                    'json': self.delete_protection_rule_data,
-                    'status_code': 200
-                },
-                {
-                    'json': self.delete_protection_rule_data,
-                    'status_code': 200
-                }
-            ]
-        )
+        mock_send_request = mocker.patch('purge_branch_protection_rules.send_request')
+        mock_send_request.side_effect = [
+            self.protection_rules_response_data,
+            github.UnknownObjectException(
+                status=403,
+                data={"msg": "unknown error"},
+                headers={"x-rate-limit": "5000"}
+            ),
+            self.delete_protection_rule_data,
+            self.delete_protection_rule_data,
+            self.delete_protection_rule_data
+        ]
 
         with pytest.raises(SystemExit) as exc, caplog.at_level(level=logging.DEBUG):
             main()
@@ -506,11 +347,11 @@ class TestPurgeBranchProtectionRules():
         assert exc.value.code == 1
 
         actual_log_output = caplog.text.splitlines()
-        assert "UnknownObjectException thrown while attempting to delete" in actual_log_output[21]
-        assert "Processed 4 rules, 1 with errors." in actual_log_output[33]
-        assert "RuntimeError: The following rules returned errors" in actual_log_output[45]
+        assert "UnknownObjectException thrown while attempting to delete" in actual_log_output[9]
+        assert "Processed 4 rules, 1 with errors." in actual_log_output[13]
+        assert "RuntimeError: The following rules returned errors" in actual_log_output[25]
 
-    def test_main_invalid_credentials(self, requests_mock: RequestsMocker):
+    def test_main_invalid_credentials(self, mocker: MockerFixture):
         """
         Test `main` function when a invalid credentials are used
         to authenticate to GitHub.
@@ -527,13 +368,11 @@ class TestPurgeBranchProtectionRules():
         - The program exits 1.
         """
 
-        requests_mock.post(
-            url="https://api.github.com:443/graphql",
-            exc=github.BadCredentialsException(
-                status=401,
-                data={"msg": "Credentials supplied do not have permissions"},
-                headers={"x-rate-limit": "0"}
-            )
+        mock_send_request = mocker.patch('purge_branch_protection_rules.send_request')
+        mock_send_request.side_effect = github.BadCredentialsException(
+            status=401,
+            data={"msg": "Credentials supplied do not have permissions"},
+            headers={"x-rate-limit": "0"}
         )
 
         with pytest.raises(SystemExit) as exc:

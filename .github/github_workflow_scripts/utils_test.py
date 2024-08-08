@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
+from datetime import datetime
 import json
+import os
 from pathlib import Path
 import pytest
+import pytz
 import requests_mock
+from pytest_mock import MockerFixture
 from typing import Any
 from utils import (
     get_env_var,
@@ -16,9 +20,25 @@ from utils import (
     CONTENT_ROLES_BLOB_MASTER_URL,
     get_content_roles,
     CONTENT_ROLES_FILENAME,
-    GITHUB_HIDDEN_DIR
+    GITHUB_HIDDEN_DIR,
+    write_deleted_summary_to_file,
+    GH_JOB_SUMMARY_ENV_VAR,
+    get_repo_owner_and_name,
+    GH_REPO_ENV_VAR,
+)
+from purge_branch_protection_rules import (
+    SUMMARY_HEADER as RULES_HEADER,
+    SUMMARY_TABLE_HEADERS as RULES_TABLE_HEADERS,
+    BranchProtectionRule
+)
+from purge_stale_branches import (
+    SUMMARY_HEADER as STALE_HEADER,
+    SUMMARY_TABLE_HEADERS as STALE_TABLE_HEADERS,
+    StaleBranch,
+    STALE_DAYS_AGO_ENV_VAR_DEFAULT
 )
 from git import Repo
+import github
 
 
 class TestGetEnvVar:
@@ -491,3 +511,403 @@ class TestGetContentRoles:
         actual_content_roles = get_content_roles(tmp_path)
 
         assert not actual_content_roles
+
+
+class TestWriteSummary:
+    @pytest.fixture(autouse=True)
+    def setup(self, mocker: MockerFixture, tmp_path: Path):
+
+        summary = tmp_path / "summary.md"
+        summary.touch()
+
+        mocker.patch.dict(os.environ, {
+            GH_JOB_SUMMARY_ENV_VAR: str(summary)
+        })
+
+    def test_md_summary_output_purge_protection_rules(
+        self,
+        tmp_path: Path
+    ):
+        """
+        Test the output of the summary file generated
+        for purging branch protection rules.
+
+        Given:
+        - A temporary directory.
+
+        When:
+        - The `GITHUB_STEP_SUMMARY` env var is set to the temporary directory.
+        - A rule is deleted.
+
+        Then:
+        - The summary file exists in the temporary directory.
+        - The summary includes the rule that was deleted.
+        """
+
+        summary_file_path = tmp_path / "summary.md"
+        deleted: list[BranchProtectionRule] = []
+
+        for i in range(10):
+            deleted.append(
+                BranchProtectionRule(
+                    str(i),
+                    f"{i}/*",
+                    matching_refs=0,
+                    deleted=True
+                )
+            )
+
+        write_deleted_summary_to_file(
+            header=RULES_HEADER,
+            table_headers=RULES_TABLE_HEADERS,
+            table_rows=[[rule.id, rule.pattern, rule.matching_refs, rule.deleted, rule.error] for rule in deleted]
+        )
+
+        assert summary_file_path.exists()
+        actual_summary_lines = summary_file_path.read_text().splitlines()
+        assert actual_summary_lines[0] == RULES_HEADER
+        assert len(actual_summary_lines) == 14
+        assert "1/*" in actual_summary_lines[5]
+
+    def test_md_summary_output_no_deleted_rules(
+            self,
+            mocker: MockerFixture,
+            tmp_path: Path
+    ):
+        """
+        Test the output of the summary file generated
+        when there were no deleted rules.
+
+        Given:
+        - A temporary directory.
+
+        When:
+        - The `GITHUB_STEP_SUMMARY` env var is set to the temporary directory.
+        - No rules have been deleted.
+
+        Then:
+        - The summary file exists in the temporary directory.
+        - The summary includes a message indicating rules have
+        not been deleted.
+        """
+
+        summary_file_path = tmp_path / "summary.md"
+        summary_file_path.touch()
+        mocker.patch.dict(os.environ, {GH_JOB_SUMMARY_ENV_VAR: str(summary_file_path)})
+
+        deleted: list[BranchProtectionRule] = []
+
+        write_deleted_summary_to_file(
+            header=RULES_HEADER,
+            table_headers=RULES_TABLE_HEADERS,
+            table_rows=[[rule.id, rule.pattern, rule.matching_refs, rule.deleted, rule.error] for rule in deleted]
+        )
+
+        assert summary_file_path.exists()
+        actual_summary_lines = summary_file_path.read_text().splitlines()
+        assert len(actual_summary_lines) == 4
+        assert actual_summary_lines[0] == RULES_HEADER
+
+    def test_md_summary_output_no_deleted_rules_2(
+            self,
+            tmp_path: Path
+    ):
+        """
+        Test the output of the summary file generated
+        when there was a list of processed rules
+        but none of them were deleted.
+
+        Given:
+        - A temporary directory.
+
+        When:
+        - The `GITHUB_STEP_SUMMARY` env var is set to the temporary directory.
+        - No rules have been deleted.
+
+        Then:
+        - The summary file exists in the temporary directory.
+        - The summary includes a message indicating rules have
+        not been deleted.
+        """
+
+        summary_file_path = tmp_path / "summary.md"
+
+        request_status_code_1 = 400
+        request_message_1 = "some client-side error"
+        request_status_code_2 = 404
+        request_message_2 = "Not found"
+
+        processed: list[BranchProtectionRule] = [
+            BranchProtectionRule(
+                id="1",
+                pattern="abcd",
+                matching_refs=0,
+                deleted=False,
+                error=github.GithubException(
+                    status=request_status_code_1,
+                    data=request_message_1,
+                    headers={"x-gh-header": "mock"}
+                )
+            ),
+            BranchProtectionRule(
+                id="2",
+                pattern="abce",
+                matching_refs=0,
+                deleted=False,
+                error=github.GithubException(
+                    status=request_status_code_2,
+                    data=request_message_2,
+                    headers={"x-gh-header": "mock"}
+                )
+            )
+        ]
+
+        write_deleted_summary_to_file(
+            header=RULES_HEADER,
+            table_headers=RULES_TABLE_HEADERS,
+            table_rows=[[rule.id, rule.pattern, rule.matching_refs, rule.deleted, rule.error] for rule in processed]
+        )
+
+        assert summary_file_path.exists()
+        actual_summary_lines = summary_file_path.read_text().splitlines()
+        assert actual_summary_lines[0] == RULES_HEADER
+        assert len(actual_summary_lines) == 6
+        assert f"{request_status_code_1} \"{request_message_1}\"" in actual_summary_lines[4]
+        assert f"{request_status_code_2} \"{request_message_2}\"" in actual_summary_lines[5]
+
+    def test_md_summary_output_purge_branch(
+        self,
+        tmp_path: Path
+    ):
+        """
+        Test the output of the summary file generated
+        for purging branch protection rules.
+
+        Given:
+        - A temporary directory.
+
+        When:
+        - The `GITHUB_STEP_SUMMARY` env var is set to the temporary directory.
+        - A rule is deleted.
+
+        Then:
+        - The summary file exists in the temporary directory.
+        - The summary includes the rule that was deleted.
+        """
+
+        summary_file_path = tmp_path / "summary.md"
+
+        deleted: list[StaleBranch] = []
+
+        for i in range(10):
+            deleted.append(
+                StaleBranch(
+                    name=f"{i}_branch",
+                    last_committed_date=datetime.now(tz=pytz.utc),
+                    deleted=True
+                )
+            )
+
+        header = STALE_HEADER.format(
+            count=len(deleted),
+            days_ago=STALE_DAYS_AGO_ENV_VAR_DEFAULT
+        )
+
+        write_deleted_summary_to_file(
+            header=header,
+            table_headers=STALE_TABLE_HEADERS,
+            table_rows=[[branch.name, branch.get_last_committed_date(), branch.deleted, branch.error] for branch in deleted]
+        )
+
+        assert summary_file_path.exists()
+        actual_summary_lines = summary_file_path.read_text().splitlines()
+        assert actual_summary_lines[0] == header
+        assert len(actual_summary_lines) == 14
+        assert "0_branch" in actual_summary_lines[4]
+
+    def test_md_summary_output_no_stale_branches(
+            self,
+            tmp_path: Path
+    ):
+        """
+        Test the output of the summary file generated
+        when there were no deleted rules.
+
+        Given:
+        - A temporary directory.
+
+        When:
+        - The `GITHUB_STEP_SUMMARY` env var is set to the temporary directory.
+        - No rules have been deleted.
+
+        Then:
+        - The summary file exists in the temporary directory.
+        - The summary includes a message indicating rules have
+        not been deleted.
+        """
+
+        summary_file_path = tmp_path / "summary.md"
+
+        deleted: list[StaleBranch] = []
+
+        header = STALE_HEADER.format(
+            count=len(deleted),
+            days_ago=STALE_DAYS_AGO_ENV_VAR_DEFAULT
+        )
+
+        write_deleted_summary_to_file(
+            header=header,
+            table_headers=STALE_TABLE_HEADERS,
+            table_rows=[[branch.name, branch.get_last_committed_date(), branch.deleted, branch.error]
+                        for branch in deleted]
+        )
+
+        assert summary_file_path.exists()
+        actual_summary_lines = summary_file_path.read_text().splitlines()
+        assert len(actual_summary_lines) == 4
+        assert actual_summary_lines[0] == header
+
+    def test_md_summary_output_no_stale_branches_2(
+            self,
+            tmp_path: Path
+    ):
+        """
+        Test the output of the summary file generated
+        when there was a list of processed rules
+        but none of them were deleted.
+
+        Given:
+        - A temporary directory.
+
+        When:
+        - The `GITHUB_STEP_SUMMARY` env var is set to the temporary directory.
+        - No rules have been deleted.
+
+        Then:
+        - The summary file exists in the temporary directory.
+        - The summary includes a message indicating rules have
+        not been deleted.
+        """
+
+        summary_file_path = tmp_path / "summary.md"
+
+        request_status_code_1 = 400
+        request_message_1 = "some client-side error"
+        request_status_code_2 = 404
+        request_message_2 = "Not found"
+
+        processed: list[StaleBranch] = [
+            StaleBranch(
+                name="1",
+                last_committed_date=datetime.now(tz=pytz.utc),
+                deleted=False,
+                error=github.GithubException(
+                    status=request_status_code_1,
+                    data=request_message_1,
+                    headers={"gh-mock-header": "mock"}
+                )
+            ),
+            StaleBranch(
+                name="2",
+                last_committed_date=datetime.now(tz=pytz.utc),
+                deleted=False,
+                error=github.GithubException(
+                    status=request_status_code_2,
+                    data=request_message_2,
+                    headers={"gh-mock-header": "mock"}
+                )
+            )
+        ]
+
+        header = STALE_HEADER.format(
+            count=len(processed),
+            days_ago=STALE_DAYS_AGO_ENV_VAR_DEFAULT
+        )
+
+        write_deleted_summary_to_file(
+            header=header,
+            table_headers=STALE_TABLE_HEADERS,
+            table_rows=[[branch.name, branch.get_last_committed_date(), branch.deleted, branch.error] for branch in processed]
+        )
+
+        assert summary_file_path.exists()
+        actual_summary_lines = summary_file_path.read_text().splitlines()
+        assert actual_summary_lines[0] == header
+        assert len(actual_summary_lines) == 6
+        assert f"{request_status_code_1} \"{request_message_1}\"" in actual_summary_lines[4]
+        assert f"{request_status_code_2} \"{request_message_2}\"" in actual_summary_lines[5]
+
+
+class TestRepoOwnerName:
+    """
+    Test class for the functionality of `utils.get_repo_owner_and_name`
+    method.
+    """
+
+    def test_valid_repo(self, mocker: MockerFixture):
+        """
+        Given:
+        - A repo owner.
+        - A repo name.
+
+        When:
+        - The environmental variable is set with owner and name.
+
+        Then:
+        - The expected repo name and owner are returned.
+        """
+
+        expected_repo_owner = "me"
+        expected_repo_name = "my_repo"
+        mocker.patch.dict(
+            os.environ,
+            {
+                GH_REPO_ENV_VAR: f"{expected_repo_owner}/{expected_repo_name}"
+            }
+        )
+
+        actual_owner, actual_repo_name = get_repo_owner_and_name()
+
+        assert actual_owner == expected_repo_owner
+        assert actual_repo_name == expected_repo_name
+
+    def test_invalid_repo(self, mocker: MockerFixture):
+        """
+        Given:
+        - A repo owner.
+        - A repo name.
+        - A repo submodule.
+
+        When:
+        - The environmental variable is set with owner, name and submodule.
+
+        Then:
+        - A `ValueError` is thrown with expected message.
+        """
+
+        expected_repo_owner = "me"
+        expected_repo_name = "my_repo/submodule"
+        mocker.patch.dict(
+            os.environ,
+            {
+                GH_REPO_ENV_VAR: f"{expected_repo_owner}/{expected_repo_name}"
+            }
+        )
+
+        with pytest.raises(ValueError, match="Input string must be in the format 'owner/repository'."):
+            get_repo_owner_and_name()
+
+    def test_env_var_not_set(self):
+        """
+        Given:
+        - Nothing.
+
+        When:
+        - The environmental variable is not set.
+
+        Then:
+        - An `OSError` is thrown with expected message.
+        """
+
+        with pytest.raises(OSError, match=f"Environmental variable '{GH_REPO_ENV_VAR}' not set"):
+            get_repo_owner_and_name()
