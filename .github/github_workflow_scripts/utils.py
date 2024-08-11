@@ -436,7 +436,7 @@ def write_deleted_summary_to_file(
         fp = Path(str(os.getenv(GH_JOB_SUMMARY_ENV_VAR)))
 
         if not fp.is_file():
-            logger.warning(f"The env var {GH_JOB_SUMMARY_ENV_VAR} is not set to a file. Not writing summary...")
+            logger.warning(f"The env var {GH_JOB_SUMMARY_ENV_VAR} is not set to a file. Skipping writing summary...")
             return
 
         table_body = tabulate.tabulate(
@@ -446,13 +446,13 @@ def write_deleted_summary_to_file(
         )
         markdown_content = f"{header}\n\n{table_body}\n"
 
-        logger.debug(f"Writing deleted jobs summary to Markdown to file '{fp}'...")
+        logger.debug(f"Writing summary to Markdown to file '{fp}'...")
         logger.debug(markdown_content)
         fp.write_text(markdown_content)
-        logger.debug("Finished writing jobs summary to Markdown to file")
+        logger.debug(f"Finished writing summary to Markdown to {fp}")
     else:
         logger.info(
-            f"Environmental variable '{GH_JOB_SUMMARY_ENV_VAR}' not set. Skipping writing job summary for deleted rules...")
+            f"Environmental variable '{GH_JOB_SUMMARY_ENV_VAR}' not set. Skipping writing job summary...")
 
 
 def get_repo_owner_and_name() -> tuple[str, str]:
