@@ -298,10 +298,10 @@ def return_entry_summary(
         verdict = BENIGN_VERDICT
     if not pred_json:
         url_score = SCORE_BENIGN
-        url_score_colored = (GREEN_COLOR if url_score < SCORE_THRESHOLD else RED_COLOR).format(url_score)
+        url_score_colored = RED_COLOR.format(url_score)
     else:
         url_score = round(pred_json[MODEL_KEY_URL_SCORE], 2)
-        url_score_colored = (GREEN_COLOR if url_score < SCORE_THRESHOLD else RED_COLOR).format(url_score)
+        url_score_colored = RED_COLOR.format(url_score)
     pred_json_colored = get_colored_pred_json(pred_json) if pred_json else {}
     domain = extract_domainv2(url)
     explain = {
@@ -332,31 +332,23 @@ def return_entry_summary(
     }
     if pred_json and pred_json[DOMAIN_AGE_KEY] is not None:
         explain_hr[DOMAIN_AGE_KEY] = str(pred_json_colored[DOMAIN_AGE_KEY])
+    return_entry = {
+        "Type": entryTypes["note"],
+        "ContentsFormat": formats['json'],
+        "HumanReadable": tableToMarkdown(f"Phishing prediction evidence | {domain}", explain_hr),
+    }
     if verdict == BENIGN_VERDICT:
-        return_entry = {
-            "Type": entryTypes["note"],
-            "ContentsFormat": formats['json'],
-            "HumanReadable": tableToMarkdown(f"Phishing prediction evidence | {domain}", explain_hr),
-            "Contents": explain,
-            "EntryContext": {'MLPredictPhishingURL': explain}
-        }
+        return_entry["EntryContext"] = {'MLPredictPhishingURL': explain}
     else:
-        return_entry = {
-            "Type": entryTypes["note"],
-            "ContentsFormat": formats['json'],
-            "HumanReadable": tableToMarkdown(f"Phishing prediction evidence | {domain}", explain_hr),
-            "Contents": explain,
+        return_entry |= {
             "EntryContext": {'MLPredictPhishingURL': explain, KEY_CONTENT_DBOT_SCORE: context_DBot_score},
             "Tags": ['DBOT_URL_PHISHING_MALICIOUS']
         }
     return_results(return_entry)
     # Get rasterize image or logo detection if logo was found
     if pred_json:
-        image = pred_json[MODEL_KEY_LOGO_IMAGE_BYTES]
-        if not image:
-            image = image_from_base64_to_bytes(output_rasterize.get(KEY_IMAGE_RASTERIZE, None))
-        res = fileResult(filename='Logo detection engine', data=image)
-        res['Type'] = entryTypes['image']
+        image = pred_json[MODEL_KEY_LOGO_IMAGE_BYTES] or image_from_base64_to_bytes(output_rasterize.get(KEY_IMAGE_RASTERIZE))
+        res = fileResult(filename='Logo detection engine', data=image, file_type=EntryType.IMAGE)
         if pred_json[MODEL_KEY_LOGO_FOUND]:
             res["Tags"] = ['DBOT_URL_PHISHING_MALICIOUS']
         return_results(res)
@@ -370,33 +362,43 @@ def return_entry_white_list(url: str):
     :return:
     """
     explain = {
-        KEY_CONTENT_DOMAIN: extract_domainv2(url),
-        KEY_CONTENT_URL: url,
-        KEY_CONTENT_AGE: MSG_WHITE_LIST,
-        KEY_CONTENT_LOGO: MSG_WHITE_LIST,
-        KEY_CONTENT_LOGIN: MSG_WHITE_LIST,
-        KEY_CONTENT_URL_SCORE: MSG_WHITE_LIST,
-        KEY_CONTENT_SEO: MSG_WHITE_LIST
-    }
+        'Domain': extract_domainv2(url),
+        'URL': url,
+    } | dict.fromkeys(
+        (
+            'NewDomain',
+            'UseOfSuspiciousLogo',
+            'HasLoginForm',
+            'URLStaticScore',
+            'BadSEOQuality'
+        ),
+        'White List'
+    )
     explain_hr = {
         KEY_HR_URL: url,
-        KEY_HR_SEO: MSG_WHITE_LIST,
-        DOMAIN_AGE_KEY: MSG_WHITE_LIST,
-        KEY_HR_LOGIN: MSG_WHITE_LIST,
-        KEY_HR_LOGO: MSG_WHITE_LIST,
-        KEY_HR_URL_SCORE: MSG_WHITE_LIST
-    }
+    } | dict.fromkeys(
+        (
+            'Search engine optimization',
+            DOMAIN_AGE_KEY,
+            'Is there a Login form?',
+            'Suspicious use of company logo',
+            'URL severity score (from 0 to 1)'
+        ),
+        'White List'
+    )
     verdict_hr = {
-        "Verdict": BENIGN_VERDICT,
+        "Verdict": 'Benign',
         "URL": url
     }
-    return_entry = {
-        "Type": entryTypes["note"],
-        "ContentsFormat": formats['json'],
-        "HumanReadable": tableToMarkdown("Verdict", verdict_hr) + tableToMarkdown("Report", explain_hr),
-        "Contents": explain,
-        "EntryContext": {'MLPredictPhishingURL': explain}
-    }
+    return_entry = CommandResults(
+        outputs=explain,
+        outputs_prefix='MLPredictPhishingURL',
+        outputs_key_field='URL',
+        readable_output=(
+            tableToMarkdown("Verdict", verdict_hr)
+            + tableToMarkdown("Report", explain_hr)
+        ),
+    )
     return_results(return_entry)
 
 
