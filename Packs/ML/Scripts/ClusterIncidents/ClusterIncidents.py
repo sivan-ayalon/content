@@ -381,12 +381,8 @@ def get_all_incidents_for_time_window_and_type(populate_fields: list[str], from_
     :return: list of incident
     """
     msg = ""
-    if query_sup:
-        query = " %s" % query_sup
-    else:
-        query = ""
     res = demisto.executeCommand('GetIncidentsByQuery', {
-        'query': query,
+        'query': query_sup or '',
         'populateFields': ' , '.join(populate_fields),
         'fromDate': from_date,
         'toDate': to_date,
@@ -676,9 +672,7 @@ def wrapped_list(obj: Any) -> list:
     :param obj:
     :return:
     """
-    if not isinstance(obj, list):
-        return [obj]
-    return obj
+    return obj if isinstance(obj, list) else [obj]
 
 
 def fill_nested_fields(
