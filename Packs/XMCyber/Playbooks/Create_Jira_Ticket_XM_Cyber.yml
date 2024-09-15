@@ -98,13 +98,13 @@ view: |-
 inputs:
 - key: Project Name
   value:
-    simple: projectName
+    simple: sivan-cortex
   required: true
   description: Name of the project in Jira to add tasks from XM Cyber
   playbookInputQuery:
 - key: Project Key
   value:
-    simple: XM Security Score Trend
+    simple: SC
   required: false
   description: The key with which to associate this issue
   playbookInputQuery:
